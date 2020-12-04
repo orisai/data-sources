@@ -1,0 +1,12 @@
+includes:
+	- phpstan.base.neon
+
+parameters:
+	level: max
+	resultCachePath: %currentWorkingDirectory%/var/build-tools/PHPStan/resultCache.src.php
+
+	ignoreErrors:
+		# It is, it's just not annotated
+		- message: '#^Nette\\Neon\\Exception is never thrown in the corresponding try block$#'
+		  path: %currentWorkingDirectory%/src/Bridge/Neon/NeonFormatEncoder.php
+		  count: 2
