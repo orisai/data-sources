@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Orisai\DataSources\Unit;
+namespace Tests\Orisai\DataSources\Unit\Bridge\SymfonyYaml;
 
 use Generator;
 use Orisai\DataSources\Bridge\SymfonyYaml\YamlFormatEncoder;
@@ -71,11 +71,11 @@ YAML,
 
 	public function testSupportsFileType(): void
 	{
-		self::assertTrue(YamlFormatEncoder::supportsFileType('yml'));
-		self::assertTrue(YamlFormatEncoder::supportsFileType('yaml'));
-		self::assertTrue(YamlFormatEncoder::supportsFileType('application/x-yaml'));
+		self::assertTrue(YamlFormatEncoder::supportsType('yml'));
+		self::assertTrue(YamlFormatEncoder::supportsType('yaml'));
+		self::assertTrue(YamlFormatEncoder::supportsType('application/x-yaml'));
 
-		self::assertFalse(YamlFormatEncoder::supportsFileType('anything'));
+		self::assertFalse(YamlFormatEncoder::supportsType('anything'));
 	}
 
 	/**

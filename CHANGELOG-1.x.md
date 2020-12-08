@@ -10,8 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - `DataSource` interface
-  - `BaseDataSource`
+	- `BaseDataSource`
+	- `NetteDataSource`
 - `FormatEncoder` interface
 	- `JsonFormatEncoder`
 	- `NeonFormatEncoder`
 	- `YamlFormatEncoder`
+- `NetteDataSourceExtension`

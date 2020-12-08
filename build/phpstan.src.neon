@@ -8,5 +8,5 @@ parameters:
 	ignoreErrors:
 		# It is, it's just not annotated
 		- message: '#^Nette\\Neon\\Exception is never thrown in the corresponding try block$#'
-		  path: %currentWorkingDirectory%/src/Bridge/Neon/NeonFormatEncoder.php
+		  path: %currentWorkingDirectory%/src/Bridge/NetteNeon/NeonFormatEncoder.php
 		  count: 2

@@ -18,16 +18,19 @@ final class DefaultDataSource extends BaseDataSource
 		$this->dataSources = $dataSources;
 	}
 
-	protected function getDataSource(string $extension): FormatEncoder
+	/**
+	 * @throws InvalidState
+	 */
+	protected function getDataSource(string $fileType): FormatEncoder
 	{
 		foreach ($this->dataSources as $source) {
-			if ($source::supportsFileType($extension)) {
+			if ($source::supportsType($fileType)) {
 				return $source;
 			}
 		}
 
 		throw InvalidState::create()
-			->withMessage("No encoder is available for file type {$extension}.");
+			->withMessage("No encoder is available for file type {$fileType}.");
 	}
 
 }

@@ -13,7 +13,7 @@ interface DataSource
 	 * @throws InvalidState No encoder is available for given file type
 	 * @throws EncodingFailure Decoding failed due to unsupported or invalid data
 	 */
-	public function fromContent(string $content, string $extension): array;
+	public function fromContent(string $content, string $fileType): array;
 
 	/**
 	 * @return array<mixed>
@@ -27,7 +27,7 @@ interface DataSource
 	 * @throws InvalidState No encoder is available for given file type
 	 * @throws EncodingFailure Encoding failed due to unsupported or invalid data
 	 */
-	public function toContent(array $data, string $extension): string;
+	public function toContent(array $data, string $fileType): string;
 
 	/**
 	 * @param array<mixed> $data
