@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Orisai\DataSources\Bridge\Neon;
+namespace Orisai\DataSources\Bridge\NetteNeon;
 
 use Nette\Neon\Decoder;
 use Nette\Neon\Encoder;
@@ -27,7 +27,7 @@ final class NeonFormatEncoder implements FormatEncoder
 		$this->encoder = new Encoder();
 	}
 
-	public static function supportsFileType(string $fileType): bool
+	public static function supportsType(string $fileType): bool
 	{
 		return in_array($fileType, [
 			'neon',

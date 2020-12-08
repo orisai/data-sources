@@ -21,15 +21,15 @@ abstract class BaseDataSource implements DataSource
 	 * @throws InvalidState
 	 * @throws EncodingFailure
 	 */
-	public function fromContent(string $content, string $extension): array
+	public function fromContent(string $content, string $fileType): array
 	{
-		$source = $this->getDataSource($extension);
+		$source = $this->getDataSource($fileType);
 
 		try {
 			$data = $source->decode($content);
 		} catch (EncodingFailure $exception) {
 			$message = Message::create()
-				->withContext("Trying to decode {$extension} into an array.")
+				->withContext("Trying to decode {$fileType} into an array.")
 				->withProblem($exception->getMessage());
 
 			throw $exception
@@ -71,15 +71,15 @@ abstract class BaseDataSource implements DataSource
 	 * @throws InvalidState
 	 * @throws EncodingFailure
 	 */
-	public function toContent(array $data, string $extension): string
+	public function toContent(array $data, string $fileType): string
 	{
-		$source = $this->getDataSource($extension);
+		$source = $this->getDataSource($fileType);
 
 		try {
 			return $source->encode($data);
 		} catch (EncodingFailure $exception) {
 			$message = Message::create()
-				->withContext("Trying to encode array into {$extension}.")
+				->withContext("Trying to encode array into {$fileType}.")
 				->withProblem($exception->getMessage());
 
 			throw $exception
@@ -105,7 +105,7 @@ abstract class BaseDataSource implements DataSource
 	/**
 	 * @throws InvalidState No encoder is available for given file type
 	 */
-	abstract protected function getDataSource(string $extension): FormatEncoder;
+	abstract protected function getDataSource(string $fileType): FormatEncoder;
 
 	protected function getFileExtension(string $file): string
 	{

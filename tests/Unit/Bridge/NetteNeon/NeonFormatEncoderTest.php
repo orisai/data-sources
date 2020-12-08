@@ -1,10 +1,10 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\Orisai\DataSources\Unit;
+namespace Tests\Orisai\DataSources\Unit\Bridge\NetteNeon;
 
 use Generator;
 use Nette\Neon\Exception;
-use Orisai\DataSources\Bridge\Neon\NeonFormatEncoder;
+use Orisai\DataSources\Bridge\NetteNeon\NeonFormatEncoder;
 use Orisai\DataSources\Exception\EncodingFailure;
 use PHPUnit\Framework\TestCase;
 use function rtrim;
@@ -72,10 +72,10 @@ NEON,
 
 	public function testSupportsFileType(): void
 	{
-		self::assertTrue(NeonFormatEncoder::supportsFileType('neon'));
-		self::assertTrue(NeonFormatEncoder::supportsFileType('application/x-neon'));
+		self::assertTrue(NeonFormatEncoder::supportsType('neon'));
+		self::assertTrue(NeonFormatEncoder::supportsType('application/x-neon'));
 
-		self::assertFalse(NeonFormatEncoder::supportsFileType('anything'));
+		self::assertFalse(NeonFormatEncoder::supportsType('anything'));
 	}
 
 	/**

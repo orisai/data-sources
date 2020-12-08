@@ -26,7 +26,7 @@ final class JsonFormatEncoder implements FormatEncoder
 		}
 	}
 
-	public static function supportsFileType(string $fileType): bool
+	public static function supportsType(string $fileType): bool
 	{
 		return in_array($fileType, [
 			'json',

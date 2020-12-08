@@ -7,7 +7,7 @@ use Orisai\DataSources\Exception\EncodingFailure;
 interface FormatEncoder
 {
 
-	public static function supportsFileType(string $fileType): bool;
+	public static function supportsType(string $fileType): bool;
 
 	/**
 	 * @return mixed

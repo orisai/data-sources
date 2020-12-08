@@ -76,9 +76,9 @@ JSON,
 
 	public function testSupportsFileType(): void
 	{
-		self::assertTrue(JsonFormatEncoder::supportsFileType('json'));
+		self::assertTrue(JsonFormatEncoder::supportsType('json'));
 
-		self::assertFalse(JsonFormatEncoder::supportsFileType('anything'));
+		self::assertFalse(JsonFormatEncoder::supportsType('anything'));
 	}
 
 	/**

@@ -27,7 +27,7 @@ final class YamlFormatEncoder implements FormatEncoder
 		$this->dumper = new Dumper(2);
 	}
 
-	public static function supportsFileType(string $fileType): bool
+	public static function supportsType(string $fileType): bool
 	{
 		return in_array($fileType, [
 			'yml',
