@@ -2,12 +2,12 @@
 
 namespace Orisai\DataSources;
 
+use Nette\IOException;
+use Nette\Utils\FileSystem;
 use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\Exceptions\Logic\InvalidArgument;
 use Orisai\Exceptions\Logic\InvalidState;
 use Orisai\Exceptions\Message;
-use function file_get_contents;
-use function file_put_contents;
 use function get_debug_type;
 use function is_array;
 use function pathinfo;
@@ -53,12 +53,7 @@ abstract class BaseDataSource implements DataSource
 	 */
 	public function fromFile(string $file): array
 	{
-		$content = file_get_contents($file);
-
-		if ($content === false) {
-			throw InvalidState::create()
-				->withMessage("File {$file} is not readable.");
-		}
+		$content = FileSystem::read($file);
 
 		return $this->fromContent(
 			$content,
@@ -69,6 +64,7 @@ abstract class BaseDataSource implements DataSource
 	/**
 	 * @param array<mixed> $data
 	 * @throws InvalidState
+	 * @throws IOException
 	 * @throws EncodingFailure
 	 */
 	public function toContent(array $data, string $fileType): string
@@ -90,16 +86,13 @@ abstract class BaseDataSource implements DataSource
 	/**
 	 * @param array<mixed> $data
 	 * @throws InvalidState
+	 * @throws IOException
 	 * @throws EncodingFailure
 	 */
 	public function toFile(string $file, array $data): void
 	{
 		$content = $this->toContent($data, $this->getFileExtension($file));
-
-		if (file_put_contents($file, $content) === false) {
-			throw InvalidState::create()
-				->withMessage("File {$file} is not writable.");
-		}
+		FileSystem::write($file, $content);
 	}
 
 	/**
