@@ -79,10 +79,10 @@ NEON,
 	}
 
 	/**
-	 * @param array<mixed> $data
+	 * @param mixed $data
 	 * @dataProvider encodingFailureProvider
 	 */
-	public function testEncodingFailure(array $data, string $errorMessage): void
+	public function testEncodingFailure($data, string $errorMessage): void
 	{
 		$encoder = new NeonFormatEncoder();
 

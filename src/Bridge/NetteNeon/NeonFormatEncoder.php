@@ -36,10 +36,10 @@ final class NeonFormatEncoder implements FormatEncoder
 	}
 
 	/**
-	 * @return array<mixed>
+	 * @return mixed
 	 * @throws EncodingFailure
 	 */
-	public function decode(string $content): array
+	public function decode(string $content)
 	{
 		try {
 			return $this->decoder->decode($content);
@@ -49,10 +49,10 @@ final class NeonFormatEncoder implements FormatEncoder
 	}
 
 	/**
-	 * @param array<mixed> $content
+	 * @param mixed $content
 	 * @throws EncodingFailure
 	 */
-	public function encode(array $content): string
+	public function encode($content): string
 	{
 		try {
 			return $this->encoder->encode($content, $this->encoder::BLOCK);

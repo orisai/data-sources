@@ -16,9 +16,9 @@ interface FormatEncoder
 	public function decode(string $content);
 
 	/**
-	 * @param array<mixed> $content
+	 * @param mixed $content
 	 * @throws EncodingFailure
 	 */
-	public function encode(array $content): string;
+	public function encode($content): string;
 
 }

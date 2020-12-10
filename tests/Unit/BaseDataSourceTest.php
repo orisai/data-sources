@@ -2,7 +2,10 @@
 
 namespace Tests\Orisai\DataSources\Unit;
 
+use Generator;
 use Nette\Utils\FileSystem;
+use Orisai\DataSources\Bridge\NetteNeon\NeonFormatEncoder;
+use Orisai\DataSources\Bridge\SymfonyYaml\YamlFormatEncoder;
 use Orisai\DataSources\DefaultDataSource;
 use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\DataSources\JsonFormatEncoder;
@@ -68,7 +71,7 @@ final class BaseDataSourceTest extends TestCase
 
 		$this->expectException(EncodingFailure::class);
 		$this->expectExceptionMessage(<<<'MSG'
-Context: Trying to encode array into json.
+Context: Trying to encode data into json.
 Problem: Malformed UTF-8 characters, possibly incorrectly encoded
 MSG);
 
@@ -84,11 +87,75 @@ MSG);
 
 		$this->expectException(EncodingFailure::class);
 		$this->expectExceptionMessage(<<<'MSG'
-Context: Trying to decode json into an array.
+Context: Trying to decode json into data.
 Problem: Syntax error
 MSG);
 
 		$source->fromContent('{', 'json');
+	}
+
+	/**
+	 * @param mixed $data
+	 * @dataProvider encodingProvider
+	 */
+	public function testEncoding($data): void
+	{
+		$types = ['serial', 'neon', 'yaml', 'json'];
+		$encoders = [
+			new SerializeEncoder(),
+			new NeonFormatEncoder(),
+			new YamlFormatEncoder(),
+			new JsonFormatEncoder(),
+		];
+		$source = new DefaultDataSource($encoders);
+
+		foreach ($types as $type) {
+			$content = $source->toContent($data, $type);
+			self::assertSame($data, $source->fromContent($content, $type));
+		}
+	}
+
+	/**
+	 * @return Generator<array<mixed>>
+	 */
+	public function encodingProvider(): Generator
+	{
+		yield 'string' => [
+			'string',
+		];
+
+		yield 'int' => [
+			123,
+		];
+
+		yield 'float' => [
+			123.456,
+		];
+
+		yield 'true' => [
+			true,
+		];
+
+		yield 'false' => [
+			false,
+		];
+
+		yield 'null' => [
+			null,
+		];
+
+		yield 'array' => [
+			'string',
+			123,
+			123.456,
+			true,
+			false,
+			null,
+			[
+				'first' => ['foo' => 'bar'],
+				2 => 'second',
+			],
+		];
 	}
 
 }

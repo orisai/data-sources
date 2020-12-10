@@ -50,9 +50,9 @@ final class YamlFormatEncoder implements FormatEncoder
 	}
 
 	/**
-	 * @param array<mixed> $content
+	 * @param mixed $content
 	 */
-	public function encode(array $content): string
+	public function encode($content): string
 	{
 		return $this->dumper->dump($content, 512);
 	}

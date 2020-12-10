@@ -53,10 +53,10 @@ final class JsonFormatEncoder implements FormatEncoder
 	}
 
 	/**
-	 * @param array<mixed> $content
+	 * @param mixed $content
 	 * @throws EncodingFailure
 	 */
-	public function encode(array $content): string
+	public function encode($content): string
 	{
 		try {
 			return json_encode(
