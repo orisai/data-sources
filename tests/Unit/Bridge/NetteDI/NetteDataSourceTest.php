@@ -31,12 +31,12 @@ final class NetteDataSourceTest extends TestCase
     "foo": "bar"
 }
 JSON,
-			str_replace("\n", PHP_EOL, $dataSource->toContent(['foo' => 'bar'], 'json')),
+			str_replace("\n", PHP_EOL, $dataSource->toString(['foo' => 'bar'], 'json')),
 		);
 
 		self::assertSame(
 			'foo: bar',
-			rtrim($dataSource->toContent(['foo' => 'bar'], 'neon'), "\n"),
+			rtrim($dataSource->toString(['foo' => 'bar'], 'neon'), "\n"),
 		);
 	}
 
@@ -53,7 +53,7 @@ JSON,
 		$this->expectException(InvalidState::class);
 		$this->expectExceptionMessage('No encoder is available for file type not-a-file-type.');
 
-		$dataSource->toContent(['foo' => 'bar'], 'not-a-file-type');
+		$dataSource->toString(['foo' => 'bar'], 'not-a-file-type');
 	}
 
 	public function testBadClass(): void
@@ -69,7 +69,7 @@ JSON,
 		// No exception, it's defined first
 		self::assertSame(
 			'foo: bar',
-			rtrim($dataSource->toContent(['foo' => 'bar'], 'neon'), "\n"),
+			rtrim($dataSource->toString(['foo' => 'bar'], 'neon'), "\n"),
 		);
 
 		$this->expectException(InvalidArgument::class);
@@ -77,7 +77,7 @@ JSON,
 			'Service encoder.badClass is not instance of Orisai\DataSources\FormatEncoder, stdClass given.',
 		);
 
-		$dataSource->toContent(['foo' => 'bar'], 'not-a-file-type');
+		$dataSource->toString(['foo' => 'bar'], 'not-a-file-type');
 	}
 
 }
