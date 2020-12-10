@@ -8,14 +8,14 @@ final class DefaultDataSource extends BaseDataSource
 {
 
 	/** @var array<FormatEncoder> */
-	private array $dataSources;
+	private array $encoders;
 
 	/**
-	 * @param array<FormatEncoder> $dataSources
+	 * @param array<FormatEncoder> $encoders
 	 */
-	public function __construct(array $dataSources)
+	public function __construct(array $encoders)
 	{
-		$this->dataSources = $dataSources;
+		$this->encoders = $encoders;
 	}
 
 	/**
@@ -23,9 +23,9 @@ final class DefaultDataSource extends BaseDataSource
 	 */
 	protected function getDataSource(string $fileType): FormatEncoder
 	{
-		foreach ($this->dataSources as $source) {
-			if ($source::supportsType($fileType)) {
-				return $source;
+		foreach ($this->encoders as $encoder) {
+			if ($encoder::supportsType($fileType)) {
+				return $encoder;
 			}
 		}
 
