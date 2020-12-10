@@ -76,6 +76,15 @@ YAML,
 		self::assertTrue(YamlFormatEncoder::supportsType('application/x-yaml'));
 
 		self::assertFalse(YamlFormatEncoder::supportsType('anything'));
+
+		self::assertSame(
+			[
+				'yml',
+				'yaml',
+				'application/x-yaml',
+			],
+			YamlFormatEncoder::getSupportedTypes(),
+		);
 	}
 
 	/**

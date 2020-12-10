@@ -79,6 +79,14 @@ JSON,
 		self::assertTrue(JsonFormatEncoder::supportsType('json'));
 
 		self::assertFalse(JsonFormatEncoder::supportsType('anything'));
+
+		self::assertSame(
+			[
+				'json',
+				'application/json',
+			],
+			JsonFormatEncoder::getSupportedTypes(),
+		);
 	}
 
 	/**

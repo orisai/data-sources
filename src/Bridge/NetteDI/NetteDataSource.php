@@ -4,9 +4,9 @@ namespace Orisai\DataSources\Bridge\NetteDI;
 
 use Nette\DI\Container;
 use Orisai\DataSources\BaseDataSource;
+use Orisai\DataSources\Exception\NotSupportedType;
 use Orisai\DataSources\FormatEncoder;
 use Orisai\Exceptions\Logic\InvalidArgument;
-use Orisai\Exceptions\Logic\InvalidState;
 use function get_debug_type;
 use function sprintf;
 
@@ -31,39 +31,60 @@ final class NetteDataSource extends BaseDataSource
 	}
 
 	/**
-	 * @throws InvalidState
+	 * @param int|string $key
 	 */
-	protected function getDataSource(string $fileType): FormatEncoder
+	private function loadEncoder($key): FormatEncoder
+	{
+		$serviceName = $this->serviceNames[$key];
+
+		$encoder = $this->container->getService($serviceName);
+		unset($this->serviceNames[$key]);
+
+		if (!$encoder instanceof FormatEncoder) {
+			throw InvalidArgument::create()
+				->withMessage(sprintf(
+					'Service %s is not instance of %s, %s given.',
+					$serviceName,
+					FormatEncoder::class,
+					get_debug_type($encoder),
+				));
+		}
+
+		return $this->encoders[] = $encoder;
+	}
+
+	/**
+	 * @return array<FormatEncoder>
+	 */
+	protected function getFormatEncoders(): array
+	{
+		foreach ($this->serviceNames as $key => $serviceName) {
+			$this->loadEncoder($key);
+		}
+
+		return $this->encoders;
+	}
+
+	/**
+	 * @throws NotSupportedType
+	 */
+	protected function getFormatEncoder(string $type): FormatEncoder
 	{
 		foreach ($this->encoders as $encoder) {
-			if ($encoder::supportsType($fileType)) {
+			if ($encoder::supportsType($type)) {
 				return $encoder;
 			}
 		}
 
 		foreach ($this->serviceNames as $key => $serviceName) {
-			$encoder = $this->container->getService($serviceName);
-			unset($this->serviceNames[$key]);
+			$encoder = $this->loadEncoder($key);
 
-			if (!$encoder instanceof FormatEncoder) {
-				throw InvalidArgument::create()
-					->withMessage(sprintf(
-						'Service %s is not instance of %s, %s given.',
-						$serviceName,
-						FormatEncoder::class,
-						get_debug_type($encoder),
-					));
-			}
-
-			$this->encoders[] = $encoder;
-
-			if ($encoder::supportsType($fileType)) {
+			if ($encoder::supportsType($type)) {
 				return $encoder;
 			}
 		}
 
-		throw InvalidState::create()
-			->withMessage("No encoder is available for file type {$fileType}.");
+		throw NotSupportedType::create($type, $this->getSupportedTypes());
 	}
 
 }

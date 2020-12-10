@@ -76,6 +76,14 @@ NEON,
 		self::assertTrue(NeonFormatEncoder::supportsType('application/x-neon'));
 
 		self::assertFalse(NeonFormatEncoder::supportsType('anything'));
+
+		self::assertSame(
+			[
+				'neon',
+				'application/x-neon',
+			],
+			NeonFormatEncoder::getSupportedTypes(),
+		);
 	}
 
 	/**

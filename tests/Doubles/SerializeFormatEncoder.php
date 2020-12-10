@@ -7,7 +7,7 @@ use function in_array;
 use function serialize;
 use function unserialize;
 
-final class SerializeEncoder implements FormatEncoder
+final class SerializeFormatEncoder implements FormatEncoder
 {
 
 	/** @var array<string> */
@@ -15,14 +15,22 @@ final class SerializeEncoder implements FormatEncoder
 		'serial',
 	];
 
+	/**
+	 * @return array<string>
+	 */
+	public static function getSupportedTypes(): array
+	{
+		return self::$types;
+	}
+
+	public static function supportsType(string $type): bool
+	{
+		return in_array($type, self::getSupportedTypes(), true);
+	}
+
 	public static function addSupportedType(string $type): void
 	{
 		self::$types[] = $type;
-	}
-
-	public static function supportsType(string $fileType): bool
-	{
-		return in_array($fileType, self::$types, true);
 	}
 
 	/**
