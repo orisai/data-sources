@@ -20,7 +20,7 @@ final class DefaultDataSourceTest extends TestCase
 		$this->expectException(InvalidState::class);
 		$this->expectExceptionMessage('No encoder is available for file type neon.');
 
-		$source->toContent(['foo' => 'bar'], 'neon');
+		$source->toString(['foo' => 'bar'], 'neon');
 	}
 
 }

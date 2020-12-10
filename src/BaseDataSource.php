@@ -19,7 +19,7 @@ abstract class BaseDataSource implements DataSource
 	 * @throws InvalidState
 	 * @throws EncodingFailure
 	 */
-	public function fromContent(string $content, string $fileType)
+	public function fromString(string $content, string $fileType)
 	{
 		$source = $this->getDataSource($fileType);
 
@@ -46,7 +46,7 @@ abstract class BaseDataSource implements DataSource
 	{
 		$content = FileSystem::read($file);
 
-		return $this->fromContent(
+		return $this->fromString(
 			$content,
 			$this->getFileExtension($file),
 		);
@@ -58,7 +58,7 @@ abstract class BaseDataSource implements DataSource
 	 * @throws IOException
 	 * @throws EncodingFailure
 	 */
-	public function toContent($data, string $fileType): string
+	public function toString($data, string $fileType): string
 	{
 		$source = $this->getDataSource($fileType);
 
@@ -82,7 +82,7 @@ abstract class BaseDataSource implements DataSource
 	 */
 	public function toFile(string $file, $data): void
 	{
-		$content = $this->toContent($data, $this->getFileExtension($file));
+		$content = $this->toString($data, $this->getFileExtension($file));
 		FileSystem::write($file, $content);
 	}
 

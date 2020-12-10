@@ -24,10 +24,10 @@ final class BaseDataSourceTest extends TestCase
 		];
 		$source = new DefaultDataSource($encoders);
 
-		$content = $source->toContent(['foo' => 'bar'], 'serial');
+		$content = $source->toString(['foo' => 'bar'], 'serial');
 		self::assertSame('a:1:{s:3:"foo";s:3:"bar";}', $content);
 
-		self::assertSame(['foo' => 'bar'], $source->fromContent($content, 'serial'));
+		self::assertSame(['foo' => 'bar'], $source->fromString($content, 'serial'));
 	}
 
 	public function testFiles(): void
@@ -75,7 +75,7 @@ Context: Trying to encode data into json.
 Problem: Malformed UTF-8 characters, possibly incorrectly encoded
 MSG);
 
-		$source->toContent(["utf\xFF"], 'json');
+		$source->toString(["utf\xFF"], 'json');
 	}
 
 	public function testDecodingFailure(): void
@@ -91,7 +91,7 @@ Context: Trying to decode json into data.
 Problem: Syntax error
 MSG);
 
-		$source->fromContent('{', 'json');
+		$source->fromString('{', 'json');
 	}
 
 	/**
@@ -110,8 +110,8 @@ MSG);
 		$source = new DefaultDataSource($encoders);
 
 		foreach ($types as $type) {
-			$content = $source->toContent($data, $type);
-			self::assertSame($data, $source->fromContent($content, $type));
+			$content = $source->toString($data, $type);
+			self::assertSame($data, $source->fromString($content, $type));
 		}
 	}
 
