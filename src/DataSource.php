@@ -10,33 +10,33 @@ interface DataSource
 {
 
 	/**
-	 * @return array<mixed>
+	 * @return mixed
 	 * @throws InvalidState No encoder is available for given file type
 	 * @throws EncodingFailure Decoding failed due to unsupported or invalid data
 	 */
-	public function fromContent(string $content, string $fileType): array;
+	public function fromContent(string $content, string $fileType);
 
 	/**
-	 * @return array<mixed>
+	 * @return mixed
 	 * @throws InvalidState No encoder is available for given file type
 	 * @throws IOException File is not readable
 	 * @throws EncodingFailure Decoding failed due to unsupported or invalid data
 	 */
-	public function fromFile(string $file): array;
+	public function fromFile(string $file);
 
 	/**
-	 * @param array<mixed> $data
+	 * @param mixed $data
 	 * @throws InvalidState No encoder is available for given file type
 	 * @throws EncodingFailure Encoding failed due to unsupported or invalid data
 	 */
-	public function toContent(array $data, string $fileType): string;
+	public function toContent($data, string $fileType): string;
 
 	/**
-	 * @param array<mixed> $data
+	 * @param mixed $data
 	 * @throws InvalidState No encoder is available for given file type
 	 * @throws IOException File is not writable
 	 * @throws EncodingFailure Encoding failed due to unsupported or invalid data
 	 */
-	public function toFile(string $file, array $data): void;
+	public function toFile(string $file, $data): void;
 
 }

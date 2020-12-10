@@ -8,8 +8,6 @@ use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\Exceptions\Logic\InvalidArgument;
 use Orisai\Exceptions\Logic\InvalidState;
 use Orisai\Exceptions\Message;
-use function get_debug_type;
-use function is_array;
 use function pathinfo;
 use const PATHINFO_EXTENSION;
 
@@ -17,11 +15,11 @@ abstract class BaseDataSource implements DataSource
 {
 
 	/**
-	 * @return array<mixed>
+	 * @return mixed
 	 * @throws InvalidState
 	 * @throws EncodingFailure
 	 */
-	public function fromContent(string $content, string $fileType): array
+	public function fromContent(string $content, string $fileType)
 	{
 		$source = $this->getDataSource($fileType);
 
@@ -29,29 +27,22 @@ abstract class BaseDataSource implements DataSource
 			$data = $source->decode($content);
 		} catch (EncodingFailure $exception) {
 			$message = Message::create()
-				->withContext("Trying to decode {$fileType} into an array.")
+				->withContext("Trying to decode {$fileType} into data.")
 				->withProblem($exception->getMessage());
 
 			throw $exception
 				->withMessage($message);
 		}
 
-		if (!is_array($data)) {
-			$dataType = get_debug_type($data);
-
-			throw EncodingFailure::create()
-				->withMessage("Decoding ended with unexpected result. Expected array, {$dataType} given.");
-		}
-
 		return $data;
 	}
 
 	/**
-	 * @return array<mixed>
+	 * @return mixed
 	 * @throws InvalidState
 	 * @throws EncodingFailure
 	 */
-	public function fromFile(string $file): array
+	public function fromFile(string $file)
 	{
 		$content = FileSystem::read($file);
 
@@ -62,12 +53,12 @@ abstract class BaseDataSource implements DataSource
 	}
 
 	/**
-	 * @param array<mixed> $data
+	 * @param mixed $data
 	 * @throws InvalidState
 	 * @throws IOException
 	 * @throws EncodingFailure
 	 */
-	public function toContent(array $data, string $fileType): string
+	public function toContent($data, string $fileType): string
 	{
 		$source = $this->getDataSource($fileType);
 
@@ -75,7 +66,7 @@ abstract class BaseDataSource implements DataSource
 			return $source->encode($data);
 		} catch (EncodingFailure $exception) {
 			$message = Message::create()
-				->withContext("Trying to encode array into {$fileType}.")
+				->withContext("Trying to encode data into {$fileType}.")
 				->withProblem($exception->getMessage());
 
 			throw $exception
@@ -84,12 +75,12 @@ abstract class BaseDataSource implements DataSource
 	}
 
 	/**
-	 * @param array<mixed> $data
+	 * @param mixed $data
 	 * @throws InvalidState
 	 * @throws IOException
 	 * @throws EncodingFailure
 	 */
-	public function toFile(string $file, array $data): void
+	public function toFile(string $file, $data): void
 	{
 		$content = $this->toContent($data, $this->getFileExtension($file));
 		FileSystem::write($file, $content);
