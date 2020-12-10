@@ -4,21 +4,26 @@ namespace Orisai\DataSources;
 
 use Nette\IOException;
 use Orisai\DataSources\Exception\EncodingFailure;
-use Orisai\Exceptions\Logic\InvalidState;
+use Orisai\DataSources\Exception\NotSupportedType;
 
 interface DataSource
 {
 
 	/**
-	 * @return mixed
-	 * @throws InvalidState No encoder is available for given file type
-	 * @throws EncodingFailure Decoding failed due to unsupported or invalid data
+	 * @return array<string>
 	 */
-	public function fromString(string $content, string $fileType);
+	public function getSupportedTypes(): array;
 
 	/**
 	 * @return mixed
-	 * @throws InvalidState No encoder is available for given file type
+	 * @throws NotSupportedType No encoder is available for given file type
+	 * @throws EncodingFailure Decoding failed due to unsupported or invalid data
+	 */
+	public function fromString(string $content, string $type);
+
+	/**
+	 * @return mixed
+	 * @throws NotSupportedType No encoder is available for given file type
 	 * @throws IOException File is not readable
 	 * @throws EncodingFailure Decoding failed due to unsupported or invalid data
 	 */
@@ -26,14 +31,14 @@ interface DataSource
 
 	/**
 	 * @param mixed $data
-	 * @throws InvalidState No encoder is available for given file type
+	 * @throws NotSupportedType No encoder is available for given file type
 	 * @throws EncodingFailure Encoding failed due to unsupported or invalid data
 	 */
-	public function toString($data, string $fileType): string;
+	public function toString($data, string $type): string;
 
 	/**
 	 * @param mixed $data
-	 * @throws InvalidState No encoder is available for given file type
+	 * @throws NotSupportedType No encoder is available for given file type
 	 * @throws IOException File is not writable
 	 * @throws EncodingFailure Encoding failed due to unsupported or invalid data
 	 */

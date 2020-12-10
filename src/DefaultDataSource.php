@@ -2,7 +2,7 @@
 
 namespace Orisai\DataSources;
 
-use Orisai\Exceptions\Logic\InvalidState;
+use Orisai\DataSources\Exception\NotSupportedType;
 
 final class DefaultDataSource extends BaseDataSource
 {
@@ -19,18 +19,25 @@ final class DefaultDataSource extends BaseDataSource
 	}
 
 	/**
-	 * @throws InvalidState
+	 * @return array<FormatEncoder>
 	 */
-	protected function getDataSource(string $fileType): FormatEncoder
+	protected function getFormatEncoders(): array
+	{
+		return $this->encoders;
+	}
+
+	/**
+	 * @throws NotSupportedType
+	 */
+	protected function getFormatEncoder(string $type): FormatEncoder
 	{
 		foreach ($this->encoders as $encoder) {
-			if ($encoder::supportsType($fileType)) {
+			if ($encoder::supportsType($type)) {
 				return $encoder;
 			}
 		}
 
-		throw InvalidState::create()
-			->withMessage("No encoder is available for file type {$fileType}.");
+		throw NotSupportedType::create($type, $this->getSupportedTypes());
 	}
 
 }

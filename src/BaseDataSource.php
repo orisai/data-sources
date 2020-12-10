@@ -5,9 +5,10 @@ namespace Orisai\DataSources;
 use Nette\IOException;
 use Nette\Utils\FileSystem;
 use Orisai\DataSources\Exception\EncodingFailure;
+use Orisai\DataSources\Exception\NotSupportedType;
 use Orisai\Exceptions\Logic\InvalidArgument;
-use Orisai\Exceptions\Logic\InvalidState;
 use Orisai\Exceptions\Message;
+use function array_merge;
 use function pathinfo;
 use const PATHINFO_EXTENSION;
 
@@ -15,19 +16,44 @@ abstract class BaseDataSource implements DataSource
 {
 
 	/**
+	 * @throws NotSupportedType No encoder is available for given file type
+	 */
+	abstract protected function getFormatEncoder(string $type): FormatEncoder;
+
+	/**
+	 * @return array<FormatEncoder>
+	 */
+	abstract protected function getFormatEncoders(): array;
+
+	/**
+	 * @return array<string>
+	 */
+	public function getSupportedTypes(): array
+	{
+		$typesByEncoder = [];
+		$encoders = $this->getFormatEncoders();
+
+		foreach ($encoders as $encoder) {
+			$typesByEncoder[] = $encoder::getSupportedTypes();
+		}
+
+		return array_merge(...$typesByEncoder);
+	}
+
+	/**
 	 * @return mixed
-	 * @throws InvalidState
+	 * @throws NotSupportedType
 	 * @throws EncodingFailure
 	 */
-	public function fromString(string $content, string $fileType)
+	public function fromString(string $content, string $type)
 	{
-		$source = $this->getDataSource($fileType);
+		$source = $this->getFormatEncoder($type);
 
 		try {
 			$data = $source->decode($content);
 		} catch (EncodingFailure $exception) {
 			$message = Message::create()
-				->withContext("Trying to decode {$fileType} into data.")
+				->withContext("Trying to decode {$type} into data.")
 				->withProblem($exception->getMessage());
 
 			throw $exception
@@ -39,7 +65,7 @@ abstract class BaseDataSource implements DataSource
 
 	/**
 	 * @return mixed
-	 * @throws InvalidState
+	 * @throws NotSupportedType
 	 * @throws EncodingFailure
 	 */
 	public function fromFile(string $file)
@@ -54,19 +80,19 @@ abstract class BaseDataSource implements DataSource
 
 	/**
 	 * @param mixed $data
-	 * @throws InvalidState
+	 * @throws NotSupportedType
 	 * @throws IOException
 	 * @throws EncodingFailure
 	 */
-	public function toString($data, string $fileType): string
+	public function toString($data, string $type): string
 	{
-		$source = $this->getDataSource($fileType);
+		$source = $this->getFormatEncoder($type);
 
 		try {
 			return $source->encode($data);
 		} catch (EncodingFailure $exception) {
 			$message = Message::create()
-				->withContext("Trying to encode data into {$fileType}.")
+				->withContext("Trying to encode data into {$type}.")
 				->withProblem($exception->getMessage());
 
 			throw $exception
@@ -76,7 +102,7 @@ abstract class BaseDataSource implements DataSource
 
 	/**
 	 * @param mixed $data
-	 * @throws InvalidState
+	 * @throws NotSupportedType
 	 * @throws IOException
 	 * @throws EncodingFailure
 	 */
@@ -85,11 +111,6 @@ abstract class BaseDataSource implements DataSource
 		$content = $this->toString($data, $this->getFileExtension($file));
 		FileSystem::write($file, $content);
 	}
-
-	/**
-	 * @throws InvalidState No encoder is available for given file type
-	 */
-	abstract protected function getDataSource(string $fileType): FormatEncoder;
 
 	protected function getFileExtension(string $file): string
 	{

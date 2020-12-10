@@ -4,9 +4,10 @@ namespace Tests\Orisai\DataSources\Unit\Bridge\NetteDI;
 
 use OriNette\DI\Boot\ManualConfigurator;
 use Orisai\DataSources\DataSource;
+use Orisai\DataSources\Exception\NotSupportedType;
 use Orisai\Exceptions\Logic\InvalidArgument;
-use Orisai\Exceptions\Logic\InvalidState;
 use PHPUnit\Framework\TestCase;
+use function assert;
 use function dirname;
 use function rtrim;
 use function str_replace;
@@ -40,7 +41,7 @@ JSON,
 		);
 	}
 
-	public function testMissing(): void
+	public function testNoEncoder(): void
 	{
 		$configurator = new ManualConfigurator(dirname(__DIR__, 4));
 		$configurator->setDebugMode(true);
@@ -48,12 +49,28 @@ JSON,
 
 		$container = $configurator->createContainer();
 
-		$dataSource = $container->getByType(DataSource::class);
+		$source = $container->getByType(DataSource::class);
+		assert($source instanceof DataSource);
 
-		$this->expectException(InvalidState::class);
-		$this->expectExceptionMessage('No encoder is available for file type not-a-file-type.');
+		$exception = null;
+		try {
+			$source->toString(['foo' => 'bar'], 'not-a-file-type');
+		} catch (NotSupportedType $exception) {
+			// Handled below
+		}
 
-		$dataSource->toString(['foo' => 'bar'], 'not-a-file-type');
+		self::assertInstanceOf(NotSupportedType::class, $exception);
+		self::assertSame('No encoder is available for type not-a-file-type.', $exception->getMessage());
+		self::assertSame('not-a-file-type', $exception->getExpectedType());
+		self::assertSame(
+			[
+				'neon',
+				'application/x-neon',
+				'json',
+				'application/json',
+			],
+			$exception->getSupportedTypes(),
+		);
 	}
 
 	public function testBadClass(): void
@@ -78,6 +95,26 @@ JSON,
 		);
 
 		$dataSource->toString(['foo' => 'bar'], 'not-a-file-type');
+	}
+
+	public function testSupportedTypes(): void
+	{
+		$configurator = new ManualConfigurator(dirname(__DIR__, 4));
+		$configurator->setDebugMode(true);
+		$configurator->addConfig(__DIR__ . '/dataSource.supportedTypes.neon');
+
+		$container = $configurator->createContainer();
+
+		$dataSource = $container->getByType(DataSource::class);
+
+		self::assertSame(
+			[
+				'serial',
+				'json',
+				'application/json',
+			],
+			$dataSource->getSupportedTypes(),
+		);
 	}
 
 }

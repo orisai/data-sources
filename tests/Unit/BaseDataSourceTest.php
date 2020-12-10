@@ -11,7 +11,7 @@ use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\DataSources\JsonFormatEncoder;
 use Orisai\Exceptions\Logic\InvalidArgument;
 use PHPStan\Testing\TestCase;
-use Tests\Orisai\DataSources\Doubles\SerializeEncoder;
+use Tests\Orisai\DataSources\Doubles\SerializeFormatEncoder;
 use function md5;
 
 final class BaseDataSourceTest extends TestCase
@@ -20,7 +20,7 @@ final class BaseDataSourceTest extends TestCase
 	public function testContent(): void
 	{
 		$encoders = [
-			new SerializeEncoder(),
+			new SerializeFormatEncoder(),
 		];
 		$source = new DefaultDataSource($encoders);
 
@@ -33,7 +33,7 @@ final class BaseDataSourceTest extends TestCase
 	public function testFiles(): void
 	{
 		$encoders = [
-			new SerializeEncoder(),
+			new SerializeFormatEncoder(),
 		];
 		$source = new DefaultDataSource($encoders);
 
@@ -52,7 +52,7 @@ final class BaseDataSourceTest extends TestCase
 	public function testNoExtension(): void
 	{
 		$encoders = [
-			new SerializeEncoder(),
+			new SerializeFormatEncoder(),
 		];
 		$source = new DefaultDataSource($encoders);
 
@@ -102,7 +102,7 @@ MSG);
 	{
 		$types = ['serial', 'neon', 'yaml', 'json'];
 		$encoders = [
-			new SerializeEncoder(),
+			new SerializeFormatEncoder(),
 			new NeonFormatEncoder(),
 			new YamlFormatEncoder(),
 			new JsonFormatEncoder(),

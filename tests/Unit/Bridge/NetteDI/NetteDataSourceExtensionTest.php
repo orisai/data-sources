@@ -9,7 +9,7 @@ use Orisai\DataSources\Bridge\SymfonyYaml\YamlFormatEncoder;
 use Orisai\DataSources\DataSource;
 use Orisai\DataSources\JsonFormatEncoder;
 use PHPUnit\Framework\TestCase;
-use Tests\Orisai\DataSources\Doubles\SerializeEncoder;
+use Tests\Orisai\DataSources\Doubles\SerializeFormatEncoder;
 use function dirname;
 use function rtrim;
 use function str_replace;
@@ -68,9 +68,9 @@ JSON,
 		self::assertInstanceOf(NetteDataSource::class, $container->getService('dataSource.dataSource'));
 
 		self::assertInstanceOf(JsonFormatEncoder::class, $container->getService('dataSource.encoder.json'));
-		self::assertInstanceOf(SerializeEncoder::class, $container->getService('dataSource.encoder.neon'));
+		self::assertInstanceOf(SerializeFormatEncoder::class, $container->getService('dataSource.encoder.neon'));
 		self::assertInstanceOf(YamlFormatEncoder::class, $container->getService('dataSource.encoder.yaml'));
-		self::assertInstanceOf(SerializeEncoder::class, $container->getService('dataSource.encoder.serial'));
+		self::assertInstanceOf(SerializeFormatEncoder::class, $container->getService('dataSource.encoder.serial'));
 
 		$dataSource = $container->getByType(DataSource::class);
 
@@ -83,7 +83,7 @@ JSON,
 			str_replace("\n", PHP_EOL, $dataSource->toString(['foo' => 'bar'], 'json')),
 		);
 
-		SerializeEncoder::addSupportedType('neon');
+		SerializeFormatEncoder::addSupportedType('neon');
 		self::assertSame(
 			'a:1:{s:3:"foo";s:3:"bar";}',
 			$dataSource->toString(['foo' => 'bar'], 'neon'),

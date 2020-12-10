@@ -4,5 +4,5 @@ extensions:
 dataSource:
 	encoders:
 		neon:
-			factory: Tests\Orisai\DataSources\Doubles\SerializeEncoder()
-		serial: Tests\Orisai\DataSources\Doubles\SerializeEncoder()
+			factory: Tests\Orisai\DataSources\Doubles\SerializeFormatEncoder()
+		serial: Tests\Orisai\DataSources\Doubles\SerializeFormatEncoder()
