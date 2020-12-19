@@ -6,6 +6,8 @@ use Generator;
 use JsonException;
 use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\DataSources\JsonFormatEncoder;
+use Orisai\Utils\Dependencies\Exception\ExtensionRequired;
+use Orisai\Utils\Tester\DependenciesTester;
 use PHPUnit\Framework\TestCase;
 use function str_replace;
 use const INF;
@@ -175,6 +177,28 @@ JSON,
 			'{',
 			'Syntax error',
 		];
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testOptionalDependencies(): void
+	{
+		DependenciesTester::addIgnoredExtensions(['json']);
+
+		$exception = null;
+
+		try {
+			new JsonFormatEncoder();
+		} catch (ExtensionRequired $exception) {
+			// Handled below
+		}
+
+		self::assertNotNull($exception);
+		self::assertSame(
+			['json'],
+			$exception->getExtensions(),
+		);
 	}
 
 }

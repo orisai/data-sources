@@ -5,6 +5,8 @@ namespace Tests\Orisai\DataSources\Unit\Bridge\SymfonyYaml;
 use Generator;
 use Orisai\DataSources\Bridge\SymfonyYaml\YamlFormatEncoder;
 use Orisai\DataSources\Exception\EncodingFailure;
+use Orisai\Utils\Dependencies\Exception\PackageRequired;
+use Orisai\Utils\Tester\DependenciesTester;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Exception\ParseException;
 use function rtrim;
@@ -121,6 +123,28 @@ YAML,
 			'{',
 			'Malformed inline YAML string at line 1 (near "{")',
 		];
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testOptionalDependencies(): void
+	{
+		DependenciesTester::addIgnoredPackages(['symfony/yaml']);
+
+		$exception = null;
+
+		try {
+			new YamlFormatEncoder();
+		} catch (PackageRequired $exception) {
+			// Handled below
+		}
+
+		self::assertNotNull($exception);
+		self::assertSame(
+			['symfony/yaml'],
+			$exception->getPackages(),
+		);
 	}
 
 }

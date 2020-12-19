@@ -6,6 +6,8 @@ use Generator;
 use Nette\Neon\Exception;
 use Orisai\DataSources\Bridge\NetteNeon\NeonFormatEncoder;
 use Orisai\DataSources\Exception\EncodingFailure;
+use Orisai\Utils\Dependencies\Exception\PackageRequired;
+use Orisai\Utils\Tester\DependenciesTester;
 use PHPUnit\Framework\TestCase;
 use function rtrim;
 use function str_replace;
@@ -162,6 +164,28 @@ NEON,
 			'"\uD801"',
 			'Invalid UTF-8 (lone surrogate) \\uD801 on line 1, column 1.',
 		];
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testOptionalDependencies(): void
+	{
+		DependenciesTester::addIgnoredPackages(['nette/neon']);
+
+		$exception = null;
+
+		try {
+			new NeonFormatEncoder();
+		} catch (PackageRequired $exception) {
+			// Handled below
+		}
+
+		self::assertNotNull($exception);
+		self::assertSame(
+			['nette/neon'],
+			$exception->getPackages(),
+		);
 	}
 
 }
