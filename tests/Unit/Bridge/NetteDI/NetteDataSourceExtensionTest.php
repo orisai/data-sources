@@ -4,10 +4,13 @@ namespace Tests\Orisai\DataSources\Unit\Bridge\NetteDI;
 
 use OriNette\DI\Boot\ManualConfigurator;
 use Orisai\DataSources\Bridge\NetteDI\NetteDataSource;
+use Orisai\DataSources\Bridge\NetteDI\NetteDataSourceExtension;
 use Orisai\DataSources\Bridge\NetteNeon\NeonFormatEncoder;
 use Orisai\DataSources\Bridge\SymfonyYaml\YamlFormatEncoder;
 use Orisai\DataSources\DataSource;
 use Orisai\DataSources\JsonFormatEncoder;
+use Orisai\Utils\Dependencies\Exception\PackageRequired;
+use Orisai\Utils\Tester\DependenciesTester;
 use PHPUnit\Framework\TestCase;
 use Tests\Orisai\DataSources\Doubles\SerializeFormatEncoder;
 use function dirname;
@@ -97,6 +100,52 @@ JSON,
 		self::assertSame(
 			'a:1:{s:3:"foo";s:3:"bar";}',
 			$dataSource->toString(['foo' => 'bar'], 'serial'),
+		);
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testOptionalEncoders(): void
+	{
+		$configurator = new ManualConfigurator(dirname(__DIR__, 4));
+		$configurator->setDebugMode(true);
+		$configurator->addConfig(__DIR__ . '/extension.default.neon');
+		$configurator->addStaticParameters([
+			'__unique' => __METHOD__,
+		]);
+
+		DependenciesTester::addIgnoredExtensions(['json']);
+		DependenciesTester::addIgnoredPackages(['nette/neon', 'symfony/yaml']);
+
+		$container = $configurator->createContainer();
+
+		self::assertInstanceOf(NetteDataSource::class, $container->getService('dataSource.dataSource'));
+
+		self::assertFalse($container->hasService('dataSource.encoder.json'));
+		self::assertFalse($container->hasService('dataSource.encoder.neon'));
+		self::assertFalse($container->hasService('dataSource.encoder.yaml'));
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testOptionalDependencies(): void
+	{
+		DependenciesTester::addIgnoredPackages(['orisai/nette-di']);
+
+		$exception = null;
+
+		try {
+			new NetteDataSourceExtension();
+		}catch (PackageRequired $exception) {
+			// handled below
+		}
+
+		self::assertNotNull($exception);
+		self::assertSame(
+			['orisai/nette-di'],
+			$exception->getPackages(),
 		);
 	}
 
