@@ -3,7 +3,7 @@ includes:
 
 parameters:
 	level: max
-	resultCachePath: %currentWorkingDirectory%/var/build-tools/PHPStan/resultCache.src.php
+	resultCachePath: %currentWorkingDirectory%/var/tools/PHPStan/resultCache.src.php
 
 	ignoreErrors:
 		# It is, it's just not annotated
