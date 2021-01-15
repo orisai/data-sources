@@ -47,26 +47,26 @@ final class DataSourceExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->config;
 
-		$encoderDefs = [];
+		$encoderDefinitions = [];
 
 		if (Dependencies::isExtensionLoaded('json')) {
-			$jsonDef = $this->addCoreEncoder('json', JsonFormatEncoder::class);
-			$encoderDefs[$jsonDef->getName()] = $jsonDef;
+			$jsonDefinition = $this->addCoreEncoder('json', JsonFormatEncoder::class);
+			$encoderDefinitions[$jsonDefinition->getName()] = $jsonDefinition;
 		}
 
 		if (Dependencies::isPackageLoaded('nette/neon')) {
-			$neonDef = $this->addCoreEncoder('neon', NeonFormatEncoder::class);
-			$encoderDefs[$neonDef->getName()] = $neonDef;
+			$neonDefinition = $this->addCoreEncoder('neon', NeonFormatEncoder::class);
+			$encoderDefinitions[$neonDefinition->getName()] = $neonDefinition;
 		}
 
 		if (Dependencies::isPackageLoaded('symfony/yaml')) {
-			$yamlDef = $this->addCoreEncoder('yaml', YamlFormatEncoder::class);
-			$encoderDefs[$yamlDef->getName()] = $yamlDef;
+			$yamlDefinition = $this->addCoreEncoder('yaml', YamlFormatEncoder::class);
+			$encoderDefinitions[$yamlDefinition->getName()] = $yamlDefinition;
 		}
 
 		foreach ($config->encoders as $encoderName => $encoderConfig) {
 			$encoderKey = $this->prefix("encoder.{$encoderName}");
-			$encoderDefs[$encoderKey] = $loader->loadDefinitionFromConfig(
+			$encoderDefinitions[$encoderKey] = $loader->loadDefinitionFromConfig(
 				$encoderConfig,
 				$encoderKey,
 			);
@@ -74,7 +74,7 @@ final class DataSourceExtension extends CompilerExtension
 
 		$builder->addDefinition($this->prefix('dataSource'))
 			->setFactory(LazyDataSource::class, [
-				'serviceNames' => array_keys($encoderDefs),
+				'serviceNames' => array_keys($encoderDefinitions),
 			])
 			->setType(DataSource::class);
 	}
@@ -85,9 +85,9 @@ final class DataSourceExtension extends CompilerExtension
 	private function addCoreEncoder(string $encoderName, string $className): ServiceDefinition
 	{
 		$builder = $this->getContainerBuilder();
-		$defName = $this->prefix("encoder.{$encoderName}");
+		$definitionName = $this->prefix("encoder.{$encoderName}");
 
-		return $builder->addDefinition($defName)
+		return $builder->addDefinition($definitionName)
 			->setFactory($className)
 			->setAutowired(false);
 	}
