@@ -3,8 +3,8 @@
 namespace Tests\Orisai\DataSources\Unit\Bridge\NetteDI;
 
 use OriNette\DI\Boot\ManualConfigurator;
-use Orisai\DataSources\Bridge\NetteDI\NetteDataSource;
-use Orisai\DataSources\Bridge\NetteDI\NetteDataSourceExtension;
+use Orisai\DataSources\Bridge\NetteDI\DataSourceExtension;
+use Orisai\DataSources\Bridge\NetteDI\LazyDataSource;
 use Orisai\DataSources\Bridge\NetteNeon\NeonFormatEncoder;
 use Orisai\DataSources\Bridge\SymfonyYaml\YamlFormatEncoder;
 use Orisai\DataSources\DataSource;
@@ -18,7 +18,7 @@ use function rtrim;
 use function str_replace;
 use const PHP_EOL;
 
-final class NetteDataSourceExtensionTest extends TestCase
+final class DataSourceExtensionTest extends TestCase
 {
 
 	public function testDefault(): void
@@ -29,7 +29,7 @@ final class NetteDataSourceExtensionTest extends TestCase
 
 		$container = $configurator->createContainer();
 
-		self::assertInstanceOf(NetteDataSource::class, $container->getService('dataSource.dataSource'));
+		self::assertInstanceOf(LazyDataSource::class, $container->getService('dataSource.dataSource'));
 
 		self::assertInstanceOf(JsonFormatEncoder::class, $container->getService('dataSource.encoder.json'));
 		self::assertInstanceOf(NeonFormatEncoder::class, $container->getService('dataSource.encoder.neon'));
@@ -68,7 +68,7 @@ JSON,
 
 		$container = $configurator->createContainer();
 
-		self::assertInstanceOf(NetteDataSource::class, $container->getService('dataSource.dataSource'));
+		self::assertInstanceOf(LazyDataSource::class, $container->getService('dataSource.dataSource'));
 
 		self::assertInstanceOf(JsonFormatEncoder::class, $container->getService('dataSource.encoder.json'));
 		self::assertInstanceOf(SerializeFormatEncoder::class, $container->getService('dataSource.encoder.neon'));
@@ -120,7 +120,7 @@ JSON,
 
 		$container = $configurator->createContainer();
 
-		self::assertInstanceOf(NetteDataSource::class, $container->getService('dataSource.dataSource'));
+		self::assertInstanceOf(LazyDataSource::class, $container->getService('dataSource.dataSource'));
 
 		self::assertFalse($container->hasService('dataSource.encoder.json'));
 		self::assertFalse($container->hasService('dataSource.encoder.neon'));
@@ -137,7 +137,7 @@ JSON,
 		$exception = null;
 
 		try {
-			new NetteDataSourceExtension();
+			new DataSourceExtension();
 		}catch (PackageRequired $exception) {
 			// handled below
 		}

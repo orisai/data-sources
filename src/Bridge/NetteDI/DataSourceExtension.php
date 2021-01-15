@@ -21,7 +21,7 @@ use function array_keys;
 /**
  * @property-read stdClass $config
  */
-final class NetteDataSourceExtension extends CompilerExtension
+final class DataSourceExtension extends CompilerExtension
 {
 
 	public function __construct()
@@ -73,7 +73,7 @@ final class NetteDataSourceExtension extends CompilerExtension
 		}
 
 		$builder->addDefinition($this->prefix('dataSource'))
-			->setFactory(NetteDataSource::class, [
+			->setFactory(LazyDataSource::class, [
 				'serviceNames' => array_keys($encoderDefs),
 			])
 			->setType(DataSource::class);

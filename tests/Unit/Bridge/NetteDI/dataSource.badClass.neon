@@ -1,4 +1,4 @@
 services:
 	encoder.neon: Orisai\DataSources\Bridge\NetteNeon\NeonFormatEncoder
 	encoder.badClass: stdClass
-	- Orisai\DataSources\Bridge\NetteDI\NetteDataSource(serviceNames: [encoder.neon, encoder.badClass])
+	- Orisai\DataSources\Bridge\NetteDI\LazyDataSource(serviceNames: [encoder.neon, encoder.badClass])
