@@ -10,7 +10,7 @@ use Orisai\Exceptions\Logic\InvalidArgument;
 use function get_debug_type;
 use function sprintf;
 
-final class NetteDataSource extends BaseDataSource
+final class LazyDataSource extends BaseDataSource
 {
 
 	private Container $container;

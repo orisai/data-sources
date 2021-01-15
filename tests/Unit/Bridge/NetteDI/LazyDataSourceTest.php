@@ -13,7 +13,7 @@ use function rtrim;
 use function str_replace;
 use const PHP_EOL;
 
-final class NetteDataSourceTest extends TestCase
+final class LazyDataSourceTest extends TestCase
 {
 
 	public function testBasic(): void

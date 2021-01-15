@@ -1,2 +1,2 @@
 extensions:
-	dataSource: Orisai\DataSources\Bridge\NetteDI\NetteDataSourceExtension
+	dataSource: Orisai\DataSources\Bridge\NetteDI\DataSourceExtension
