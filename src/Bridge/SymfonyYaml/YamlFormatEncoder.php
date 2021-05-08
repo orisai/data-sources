@@ -15,6 +15,7 @@ final class YamlFormatEncoder implements FormatEncoder
 {
 
 	private Parser $parser;
+
 	private Dumper $dumper;
 
 	public function __construct()

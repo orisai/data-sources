@@ -15,6 +15,7 @@ final class NeonFormatEncoder implements FormatEncoder
 {
 
 	private Decoder $decoder;
+
 	private Encoder $encoder;
 
 	public function __construct()

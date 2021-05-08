@@ -138,7 +138,7 @@ JSON,
 
 		try {
 			new DataSourceExtension();
-		}catch (PackageRequired $exception) {
+		} catch (PackageRequired $exception) {
 			// handled below
 		}
 
