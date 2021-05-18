@@ -81,7 +81,6 @@ abstract class BaseDataSource implements DataSource
 	/**
 	 * @param mixed $data
 	 * @throws NotSupportedType
-	 * @throws IOException
 	 * @throws EncodingFailure
 	 */
 	public function toString($data, string $type): string
