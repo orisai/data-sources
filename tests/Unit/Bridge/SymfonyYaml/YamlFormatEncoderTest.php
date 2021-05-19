@@ -121,7 +121,7 @@ YAML,
 	{
 		yield [
 			'{',
-			'Malformed inline YAML string at line 1 (near "{")',
+			'Malformed inline YAML string at line 1 (near "{").',
 		];
 	}
 
