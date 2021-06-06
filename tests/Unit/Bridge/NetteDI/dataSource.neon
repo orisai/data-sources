@@ -1,4 +1,0 @@
-services:
-	encoder.neon: Orisai\DataSources\Bridge\NetteNeon\NeonFormatEncoder
-	encoder.json: Orisai\DataSources\JsonFormatEncoder
-	- Orisai\DataSources\Bridge\NetteDI\LazyDataSource(serviceNames: [encoder.neon, encoder.json])
