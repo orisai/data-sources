@@ -4,10 +4,11 @@ namespace Tests\Orisai\DataSources\Unit\Bridge\NetteDI;
 
 use OriNette\DI\Boot\ManualConfigurator;
 use Orisai\DataSources\Bridge\NetteDI\DataSourceExtension;
-use Orisai\DataSources\Bridge\NetteDI\LazyDataSource;
+use Orisai\DataSources\Bridge\NetteDI\LazyFormatEncoderManager;
 use Orisai\DataSources\Bridge\NetteNeon\NeonFormatEncoder;
 use Orisai\DataSources\Bridge\SymfonyYaml\YamlFormatEncoder;
 use Orisai\DataSources\DataSource;
+use Orisai\DataSources\DefaultDataSource;
 use Orisai\DataSources\JsonFormatEncoder;
 use Orisai\Utils\Dependencies\Exception\PackageRequired;
 use Orisai\Utils\Tester\DependenciesTester;
@@ -29,7 +30,8 @@ final class DataSourceExtensionTest extends TestCase
 
 		$container = $configurator->createContainer();
 
-		self::assertInstanceOf(LazyDataSource::class, $container->getService('dataSource.dataSource'));
+		self::assertInstanceOf(LazyFormatEncoderManager::class, $container->getService('dataSource.encoders.manager'));
+		self::assertInstanceOf(DefaultDataSource::class, $container->getService('dataSource.dataSource'));
 
 		self::assertInstanceOf(JsonFormatEncoder::class, $container->getService('dataSource.encoder.json'));
 		self::assertInstanceOf(NeonFormatEncoder::class, $container->getService('dataSource.encoder.neon'));
@@ -68,7 +70,8 @@ JSON,
 
 		$container = $configurator->createContainer();
 
-		self::assertInstanceOf(LazyDataSource::class, $container->getService('dataSource.dataSource'));
+		self::assertInstanceOf(LazyFormatEncoderManager::class, $container->getService('dataSource.encoders.manager'));
+		self::assertInstanceOf(DefaultDataSource::class, $container->getService('dataSource.dataSource'));
 
 		self::assertInstanceOf(JsonFormatEncoder::class, $container->getService('dataSource.encoder.json'));
 		self::assertInstanceOf(SerializeFormatEncoder::class, $container->getService('dataSource.encoder.neon'));
@@ -120,7 +123,8 @@ JSON,
 
 		$container = $configurator->createContainer();
 
-		self::assertInstanceOf(LazyDataSource::class, $container->getService('dataSource.dataSource'));
+		self::assertInstanceOf(LazyFormatEncoderManager::class, $container->getService('dataSource.encoders.manager'));
+		self::assertInstanceOf(DefaultDataSource::class, $container->getService('dataSource.dataSource'));
 
 		self::assertFalse($container->hasService('dataSource.encoder.json'));
 		self::assertFalse($container->hasService('dataSource.encoder.neon'));

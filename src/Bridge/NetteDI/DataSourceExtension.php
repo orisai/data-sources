@@ -11,7 +11,9 @@ use OriNette\DI\Definitions\DefinitionsLoader;
 use Orisai\DataSources\Bridge\NetteNeon\NeonFormatEncoder;
 use Orisai\DataSources\Bridge\SymfonyYaml\YamlFormatEncoder;
 use Orisai\DataSources\DataSource;
+use Orisai\DataSources\DefaultDataSource;
 use Orisai\DataSources\FormatEncoder;
+use Orisai\DataSources\FormatEncoderManager;
 use Orisai\DataSources\JsonFormatEncoder;
 use Orisai\Utils\Dependencies\Dependencies;
 use Orisai\Utils\Dependencies\Exception\PackageRequired;
@@ -72,10 +74,13 @@ final class DataSourceExtension extends CompilerExtension
 			);
 		}
 
+		$encoderManagerDefinition = $builder->addDefinition($this->prefix('encoders.manager'))
+			->setFactory(LazyFormatEncoderManager::class, [array_keys($encoderDefinitions)])
+			->setType(FormatEncoderManager::class)
+			->setAutowired(false);
+
 		$builder->addDefinition($this->prefix('dataSource'))
-			->setFactory(LazyDataSource::class, [
-				'serviceNames' => array_keys($encoderDefinitions),
-			])
+			->setFactory(DefaultDataSource::class, [$encoderManagerDefinition])
 			->setType(DataSource::class);
 	}
 

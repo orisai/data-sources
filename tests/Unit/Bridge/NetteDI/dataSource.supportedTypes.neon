@@ -1,4 +1,0 @@
-services:
-	encoder.serialize: Tests\Orisai\DataSources\Doubles\SerializeFormatEncoder
-	encoder.json: Orisai\DataSources\JsonFormatEncoder
-	- Orisai\DataSources\Bridge\NetteDI\LazyDataSource(serviceNames: [encoder.serialize, encoder.json])
