@@ -31,7 +31,7 @@
 	"require-dev": {
 		"ext-json": "*",
 		"brianium/paratest": "^6.3.0",
-		"infection/infection": "^0.22.1",
+		"infection/infection": "^0.24.0",
 		"nette/neon": "^3.2.0",
 		"orisai/coding-standard": "^2.0.0",
 		"orisai/nette-di": "^1.0.0",
