@@ -90,6 +90,7 @@ NEON,
 
 	/**
 	 * @param mixed $data
+	 *
 	 * @dataProvider encodingFailureProvider
 	 */
 	public function testEncodingFailure($data, string $errorMessage): void

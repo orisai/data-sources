@@ -98,6 +98,7 @@ MSG);
 
 	/**
 	 * @param mixed $data
+	 *
 	 * @dataProvider encodingProvider
 	 */
 	public function testEncoding($data): void
