@@ -2,33 +2,15 @@
 
 namespace Orisai\DataSources\Bridge\NetteDI;
 
-use OriNette\DI\Services\CachedServiceManager;
+use OriNette\DI\Services\ServiceManager;
 use Orisai\DataSources\FormatEncoder;
 use Orisai\DataSources\FormatEncoderManager;
 
-final class LazyFormatEncoderManager extends CachedServiceManager implements FormatEncoderManager
+final class LazyFormatEncoderManager extends ServiceManager implements FormatEncoderManager
 {
 
 	/** @var array<FormatEncoder>|null */
 	private ?array $encoders = null;
-
-	/**
-	 * @param int|string $key
-	 */
-	private function get($key): FormatEncoder
-	{
-		$service = $this->getService($key);
-
-		if ($service === null) {
-			$this->throwMissingService($key, FormatEncoder::class);
-		}
-
-		if (!$service instanceof FormatEncoder) {
-			$this->throwInvalidServiceType($key, FormatEncoder::class, $service);
-		}
-
-		return $service;
-	}
 
 	/**
 	 * @return array<FormatEncoder>
@@ -41,7 +23,7 @@ final class LazyFormatEncoderManager extends CachedServiceManager implements For
 
 		$encoders = [];
 		foreach ($this->getKeys() as $key) {
-			$encoders[$key] = $this->get($key);
+			$encoders[$key] = $this->getTypedServiceOrThrow($key, FormatEncoder::class);
 		}
 
 		return $this->encoders = $encoders;
