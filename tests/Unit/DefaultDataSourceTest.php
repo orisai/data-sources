@@ -12,7 +12,7 @@ use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\DataSources\Exception\NotSupportedType;
 use Orisai\DataSources\JsonFormatEncoder;
 use Orisai\Exceptions\Logic\InvalidArgument;
-use PHPStan\Testing\TestCase;
+use PHPUnit\Framework\TestCase;
 use Tests\Orisai\DataSources\Doubles\SerializeFormatEncoder;
 use function md5;
 
