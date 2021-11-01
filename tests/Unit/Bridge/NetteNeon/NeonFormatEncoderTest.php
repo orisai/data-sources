@@ -45,7 +45,7 @@ final class NeonFormatEncoderTest extends TestCase
 
 		self::assertSame(
 			<<<'NEON'
-0: null
+- null
 one: 1
 2: 2.2
 three: three
@@ -53,7 +53,7 @@ three: three
 5: true
 7:
 	foo: bar
-	0:
+	-
 		bar: baz
 
 "8-text": text
