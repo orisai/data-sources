@@ -15,17 +15,31 @@ use Orisai\Utils\Dependencies\Exception\PackageRequired;
 use PHPUnit\Framework\TestCase;
 use Tests\Orisai\DataSources\Doubles\SerializeFormatEncoder;
 use function dirname;
+use function mkdir;
 use function rtrim;
 use function str_replace;
 use const PHP_EOL;
+use const PHP_VERSION_ID;
 
 final class DataSourceExtensionTest extends TestCase
 {
 
+	private string $rootDir;
+
+	protected function setUp(): void
+	{
+		parent::setUp();
+
+		$this->rootDir = dirname(__DIR__, 4);
+		if (PHP_VERSION_ID < 81_000) {
+			@mkdir("$this->rootDir/var/build");
+		}
+	}
+
 	public function testDefault(): void
 	{
-		$configurator = new ManualConfigurator(dirname(__DIR__, 4));
-		$configurator->setDebugMode(true);
+		$configurator = new ManualConfigurator($this->rootDir);
+		$configurator->setForceReloadContainer();
 		$configurator->addConfig(__DIR__ . '/extension.default.neon');
 
 		$container = $configurator->createContainer();
@@ -64,8 +78,8 @@ JSON,
 	 */
 	public function testCustomized(): void
 	{
-		$configurator = new ManualConfigurator(dirname(__DIR__, 4));
-		$configurator->setDebugMode(true);
+		$configurator = new ManualConfigurator($this->rootDir);
+		$configurator->setForceReloadContainer();
 		$configurator->addConfig(__DIR__ . '/extension.customized.neon');
 
 		$container = $configurator->createContainer();
@@ -111,8 +125,8 @@ JSON,
 	 */
 	public function testOptionalEncoders(): void
 	{
-		$configurator = new ManualConfigurator(dirname(__DIR__, 4));
-		$configurator->setDebugMode(true);
+		$configurator = new ManualConfigurator($this->rootDir);
+		$configurator->setForceReloadContainer();
 		$configurator->addConfig(__DIR__ . '/extension.default.neon');
 		$configurator->addStaticParameters([
 			'__unique' => __METHOD__,

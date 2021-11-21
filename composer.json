@@ -34,7 +34,7 @@
 		"infection/infection": "^0.25.0",
 		"nette/neon": "^3.3.0",
 		"orisai/coding-standard": "^2.0.0",
-		"orisai/nette-di": "^1.0.0",
+		"orisai/nette-di": "^1.0.3",
 		"phpstan/extension-installer": "^1.0.0",
 		"phpstan/phpstan": "^1.0.0",
 		"phpstan/phpstan-deprecation-rules": "^1.0.0",
