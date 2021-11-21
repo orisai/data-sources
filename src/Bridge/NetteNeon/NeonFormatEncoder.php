@@ -2,9 +2,8 @@
 
 namespace Orisai\DataSources\Bridge\NetteNeon;
 
-use Nette\Neon\Decoder;
-use Nette\Neon\Encoder;
 use Nette\Neon\Exception;
+use Nette\Neon\Neon;
 use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\DataSources\FormatEncoder;
 use Orisai\Utils\Dependencies\Dependencies;
@@ -14,18 +13,11 @@ use function in_array;
 final class NeonFormatEncoder implements FormatEncoder
 {
 
-	private Decoder $decoder;
-
-	private Encoder $encoder;
-
 	public function __construct()
 	{
 		if (($deps = Dependencies::getNotLoadedPackages(['nette/neon'])) !== []) {
 			throw PackageRequired::forClass($deps, self::class);
 		}
-
-		$this->decoder = new Decoder();
-		$this->encoder = new Encoder();
 	}
 
 	/**
@@ -51,7 +43,7 @@ final class NeonFormatEncoder implements FormatEncoder
 	public function decode(string $content)
 	{
 		try {
-			return $this->decoder->decode($content);
+			return Neon::decode($content);
 		} catch (Exception $exception) {
 			throw EncodingFailure::fromPrevious($exception);
 		}
@@ -64,7 +56,7 @@ final class NeonFormatEncoder implements FormatEncoder
 	public function encode($content): string
 	{
 		try {
-			return $this->encoder->encode($content, $this->encoder::BLOCK);
+			return Neon::encode($content, true);
 		} catch (Exception $exception) {
 			throw EncodingFailure::fromPrevious($exception);
 		}

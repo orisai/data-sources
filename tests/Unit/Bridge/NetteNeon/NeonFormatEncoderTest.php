@@ -163,7 +163,7 @@ NEON,
 
 		yield [
 			'"\uD801"',
-			'Invalid UTF-8 (lone surrogate) \\uD801 on line 1, column 1.',
+			'Invalid UTF-8 sequence \\uD801 on line 1, column 1.',
 		];
 	}
 
