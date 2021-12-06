@@ -31,7 +31,7 @@ final class DataSourceExtensionTest extends TestCase
 		parent::setUp();
 
 		$this->rootDir = dirname(__DIR__, 4);
-		if (PHP_VERSION_ID < 81_000) {
+		if (PHP_VERSION_ID < 8_01_00) {
 			@mkdir("$this->rootDir/var/build");
 		}
 	}
