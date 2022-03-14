@@ -47,7 +47,6 @@ final class YamlFormatEncoder implements FormatEncoder
 
 	/**
 	 * @return mixed
-	 * @throws EncodingFailure
 	 */
 	public function decode(string $content)
 	{

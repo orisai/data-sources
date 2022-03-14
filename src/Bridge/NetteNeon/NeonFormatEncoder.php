@@ -38,7 +38,6 @@ final class NeonFormatEncoder implements FormatEncoder
 
 	/**
 	 * @return mixed
-	 * @throws EncodingFailure
 	 */
 	public function decode(string $content)
 	{

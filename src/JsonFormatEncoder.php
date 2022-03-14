@@ -44,7 +44,6 @@ final class JsonFormatEncoder implements FormatEncoder
 
 	/**
 	 * @return mixed
-	 * @throws EncodingFailure
 	 */
 	public function decode(string $content)
 	{
@@ -62,7 +61,6 @@ final class JsonFormatEncoder implements FormatEncoder
 
 	/**
 	 * @param mixed $content
-	 * @throws EncodingFailure
 	 */
 	public function encode($content): string
 	{
