@@ -51,15 +51,10 @@ final class NeonFormatEncoder implements FormatEncoder
 
 	/**
 	 * @param mixed $content
-	 * @throws EncodingFailure
 	 */
 	public function encode($content): string
 	{
-		try {
-			return Neon::encode($content, true);
-		} catch (Exception $exception) {
-			throw EncodingFailure::fromPrevious($exception);
-		}
+		return Neon::encode($content, true);
 	}
 
 }
