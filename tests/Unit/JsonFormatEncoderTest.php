@@ -94,7 +94,7 @@ JSON,
 	/**
 	 * @param mixed $data
 	 *
-	 * @dataProvider encodingFailureProvider
+	 * @dataProvider provideEncodingFailure
 	 */
 	public function testEncodingFailure($data, string $errorMessage): void
 	{
@@ -121,7 +121,7 @@ JSON,
 	/**
 	 * @return Generator<array<mixed>>
 	 */
-	public function encodingFailureProvider(): Generator
+	public function provideEncodingFailure(): Generator
 	{
 		yield [
 			["utf\xFF"],
@@ -140,7 +140,7 @@ JSON,
 	}
 
 	/**
-	 * @dataProvider decodingFailureProvider
+	 * @dataProvider provideDecodingFailure
 	 */
 	public function testDecodingFailure(string $data, string $errorMessage): void
 	{
@@ -167,7 +167,7 @@ JSON,
 	/**
 	 * @return Generator<array<mixed>>
 	 */
-	public function decodingFailureProvider(): Generator
+	public function provideDecodingFailure(): Generator
 	{
 		yield [
 			'',

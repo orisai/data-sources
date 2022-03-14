@@ -96,7 +96,7 @@ NEON,
 	}
 
 	/**
-	 * @dataProvider decodingFailureProvider
+	 * @dataProvider provideDecodingFailure
 	 */
 	public function testDecodingFailure(string $data, string $errorMessage): void
 	{
@@ -123,7 +123,7 @@ NEON,
 	/**
 	 * @return Generator<array<mixed>>
 	 */
-	public function decodingFailureProvider(): Generator
+	public function provideDecodingFailure(): Generator
 	{
 		yield [
 			"Hello\nWorld",

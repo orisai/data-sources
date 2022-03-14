@@ -90,7 +90,7 @@ YAML,
 	}
 
 	/**
-	 * @dataProvider decodingFailureProvider
+	 * @dataProvider provideEncodingFailure
 	 */
 	public function testDecodingFailure(string $data, string $errorMessage): void
 	{
@@ -117,7 +117,7 @@ YAML,
 	/**
 	 * @return Generator<array<mixed>>
 	 */
-	public function decodingFailureProvider(): Generator
+	public function provideEncodingFailure(): Generator
 	{
 		yield [
 			'{',

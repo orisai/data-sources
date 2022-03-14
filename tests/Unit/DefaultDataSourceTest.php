@@ -99,7 +99,7 @@ MSG);
 	/**
 	 * @param mixed $data
 	 *
-	 * @dataProvider encodingProvider
+	 * @dataProvider provideEncoding
 	 */
 	public function testEncoding($data): void
 	{
@@ -121,7 +121,7 @@ MSG);
 	/**
 	 * @return Generator<array<mixed>>
 	 */
-	public function encodingProvider(): Generator
+	public function provideEncoding(): Generator
 	{
 		yield 'string' => [
 			'string',
