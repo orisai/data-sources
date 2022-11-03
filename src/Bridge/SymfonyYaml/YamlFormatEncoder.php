@@ -28,21 +28,30 @@ final class YamlFormatEncoder implements FormatEncoder
 		$this->dumper = new Dumper(2);
 	}
 
-	/**
-	 * @return array<string>
-	 */
-	public static function getSupportedTypes(): array
+	public static function getContentTypes(): array
 	{
 		return [
-			'yml',
-			'yaml',
+			'application/x-yml',
 			'application/x-yaml',
 		];
 	}
 
-	public static function supportsType(string $type): bool
+	public static function supportsContentType(string $type): bool
 	{
-		return in_array($type, self::getSupportedTypes(), true);
+		return in_array($type, self::getContentTypes(), true);
+	}
+
+	public static function getFileExtensions(): array
+	{
+		return [
+			'yml',
+			'yaml',
+		];
+	}
+
+	public static function supportsFileExtension(string $extension): bool
+	{
+		return in_array($extension, self::getFileExtensions(), true);
 	}
 
 	/**

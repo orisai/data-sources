@@ -10,6 +10,7 @@ use Orisai\Exceptions\Logic\InvalidArgument;
 use Orisai\Exceptions\Message;
 use function array_merge;
 use function pathinfo;
+use function str_contains;
 use const PATHINFO_EXTENSION;
 
 final class DefaultDataSource implements DataSource
@@ -25,28 +26,55 @@ final class DefaultDataSource implements DataSource
 	/**
 	 * @throws NotSupportedType
 	 */
-	protected function getFormatEncoder(string $type): FormatEncoder
+	private function getFormatEncoderForMediaType(string $type): FormatEncoder
 	{
 		foreach ($this->encoderManager->getAll() as $encoder) {
-			if ($encoder::supportsType($type)) {
+			if ($encoder::supportsContentType($type)) {
 				return $encoder;
 			}
 		}
 
-		throw NotSupportedType::create($type, $this->getSupportedTypes());
+		throw NotSupportedType::create($type, $this->getContentTypes());
 	}
 
 	/**
-	 * @return array<string>
+	 * @throws NotSupportedType
 	 */
-	public function getSupportedTypes(): array
+	private function getFormatEncoderForFileExtension(string $extension): FormatEncoder
+	{
+		foreach ($this->encoderManager->getAll() as $encoder) {
+			if ($encoder::supportsFileExtension($extension)) {
+				return $encoder;
+			}
+		}
+
+		throw NotSupportedType::create($extension, $this->getFileExtensions());
+	}
+
+	public function getContentTypes(): array
 	{
 		$typesByEncoder = [];
 
 		foreach ($this->encoderManager->getAll() as $encoder) {
-			$typesByEncoder[] = $encoder::getSupportedTypes();
+			$typesByEncoder[] = $encoder::getContentTypes();
 		}
 
+		return array_merge(...$typesByEncoder);
+	}
+
+	public function getFileExtensions(): array
+	{
+		$typesByEncoder = [];
+
+		foreach ($this->encoderManager->getAll() as $encoder) {
+			$typesByEncoder[] = $encoder::getFileExtensions();
+		}
+
+		/**
+		 * @var list<string>
+		 *
+		 * @phpcsSuppress SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat not supported by rule
+		 */
 		return array_merge(...$typesByEncoder);
 	}
 
@@ -55,15 +83,17 @@ final class DefaultDataSource implements DataSource
 	 * @throws NotSupportedType
 	 * @throws EncodingFailure
 	 */
-	public function fromString(string $content, string $type)
+	public function fromString(string $content, string $typeOrExtension)
 	{
-		$source = $this->getFormatEncoder($type);
+		$source = str_contains($typeOrExtension, '/')
+			? $this->getFormatEncoderForMediaType($typeOrExtension)
+			: $this->getFormatEncoderForFileExtension($typeOrExtension);
 
 		try {
 			$data = $source->decode($content);
 		} catch (EncodingFailure $exception) {
 			$message = Message::create()
-				->withContext("Trying to decode {$type} into data.")
+				->withContext("Trying to decode {$typeOrExtension} into data.")
 				->withProblem($exception->getMessage());
 
 			throw $exception
@@ -93,15 +123,17 @@ final class DefaultDataSource implements DataSource
 	 * @throws NotSupportedType
 	 * @throws EncodingFailure
 	 */
-	public function toString($data, string $type): string
+	public function toString($data, string $typeOrExtension): string
 	{
-		$source = $this->getFormatEncoder($type);
+		$source = str_contains($typeOrExtension, '/')
+			? $this->getFormatEncoderForMediaType($typeOrExtension)
+			: $this->getFormatEncoderForFileExtension($typeOrExtension);
 
 		try {
 			return $source->encode($data);
 		} catch (EncodingFailure $exception) {
 			$message = Message::create()
-				->withContext("Trying to encode data into {$type}.")
+				->withContext("Trying to encode data into {$typeOrExtension}.")
 				->withProblem($exception->getMessage());
 
 			throw $exception
@@ -121,7 +153,7 @@ final class DefaultDataSource implements DataSource
 		FileSystem::write($file, $content);
 	}
 
-	protected function getFileExtension(string $file): string
+	private function getFileExtension(string $file): string
 	{
 		$ext = pathinfo($file, PATHINFO_EXTENSION);
 

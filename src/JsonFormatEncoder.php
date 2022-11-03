@@ -26,20 +26,28 @@ final class JsonFormatEncoder implements FormatEncoder
 		}
 	}
 
-	/**
-	 * @return array<string>
-	 */
-	public static function getSupportedTypes(): array
+	public static function getContentTypes(): array
 	{
 		return [
-			'json',
 			'application/json',
 		];
 	}
 
-	public static function supportsType(string $type): bool
+	public static function supportsContentType(string $type): bool
 	{
-		return in_array($type, self::getSupportedTypes(), true);
+		return in_array($type, self::getContentTypes(), true);
+	}
+
+	public static function getFileExtensions(): array
+	{
+		return [
+			'json',
+		];
+	}
+
+	public static function supportsFileExtension(string $extension): bool
+	{
+		return in_array($extension, self::getFileExtensions(), true);
 	}
 
 	/**

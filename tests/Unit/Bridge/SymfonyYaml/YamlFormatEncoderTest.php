@@ -57,7 +57,7 @@ three: three
     bar: baz
 8-text: text
 9: '<foo>'
-10: '''bar'''
+10: "'bar'"
 20: '"baz"'
 30: '&blong&'
 40: é
@@ -71,21 +71,35 @@ YAML,
 		);
 	}
 
-	public function testSupportsFileType(): void
+	public function testSupportsContentType(): void
 	{
-		self::assertTrue(YamlFormatEncoder::supportsType('yml'));
-		self::assertTrue(YamlFormatEncoder::supportsType('yaml'));
-		self::assertTrue(YamlFormatEncoder::supportsType('application/x-yaml'));
+		self::assertTrue(YamlFormatEncoder::supportsContentType('application/x-yml'));
+		self::assertTrue(YamlFormatEncoder::supportsContentType('application/x-yaml'));
 
-		self::assertFalse(YamlFormatEncoder::supportsType('anything'));
+		self::assertFalse(YamlFormatEncoder::supportsContentType('text/csv'));
+
+		self::assertSame(
+			[
+				'application/x-yml',
+				'application/x-yaml',
+			],
+			YamlFormatEncoder::getContentTypes(),
+		);
+	}
+
+	public function testSupportsFileExtension(): void
+	{
+		self::assertTrue(YamlFormatEncoder::supportsFileExtension('yml'));
+		self::assertTrue(YamlFormatEncoder::supportsFileExtension('yaml'));
+
+		self::assertFalse(YamlFormatEncoder::supportsFileExtension('csv'));
 
 		self::assertSame(
 			[
 				'yml',
 				'yaml',
-				'application/x-yaml',
 			],
-			YamlFormatEncoder::getSupportedTypes(),
+			YamlFormatEncoder::getFileExtensions(),
 		);
 	}
 

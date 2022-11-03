@@ -184,7 +184,24 @@ MSG);
 		);
 	}
 
-	public function testSupportedTypes(): void
+	public function testSupportedContentTypes(): void
+	{
+		$manager = new DefaultFormatEncoderManager([
+			new SerializeFormatEncoder(),
+			new JsonFormatEncoder(),
+		]);
+		$source = new DefaultDataSource($manager);
+
+		self::assertSame(
+			[
+				'text/serial',
+				'application/json',
+			],
+			$source->getContentTypes(),
+		);
+	}
+
+	public function testSupportedExtensions(): void
 	{
 		$manager = new DefaultFormatEncoderManager([
 			new SerializeFormatEncoder(),
@@ -196,9 +213,8 @@ MSG);
 			[
 				'serial',
 				'json',
-				'application/json',
 			],
-			$source->getSupportedTypes(),
+			$source->getFileExtensions(),
 		);
 	}
 

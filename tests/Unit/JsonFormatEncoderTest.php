@@ -76,18 +76,31 @@ JSON,
 		);
 	}
 
-	public function testSupportsFileType(): void
+	public function testSupportsContentType(): void
 	{
-		self::assertTrue(JsonFormatEncoder::supportsType('json'));
+		self::assertTrue(JsonFormatEncoder::supportsContentType('application/json'));
 
-		self::assertFalse(JsonFormatEncoder::supportsType('anything'));
+		self::assertFalse(JsonFormatEncoder::supportsContentType('text/csv'));
+
+		self::assertSame(
+			[
+				'application/json',
+			],
+			JsonFormatEncoder::getContentTypes(),
+		);
+	}
+
+	public function testSupportsFileExtension(): void
+	{
+		self::assertTrue(JsonFormatEncoder::supportsFileExtension('json'));
+
+		self::assertFalse(JsonFormatEncoder::supportsFileExtension('csv'));
 
 		self::assertSame(
 			[
 				'json',
-				'application/json',
 			],
-			JsonFormatEncoder::getSupportedTypes(),
+			JsonFormatEncoder::getFileExtensions(),
 		);
 	}
 

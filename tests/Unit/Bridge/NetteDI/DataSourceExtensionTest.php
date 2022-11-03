@@ -103,10 +103,10 @@ JSON,
 			str_replace("\n", PHP_EOL, $dataSource->toString(['foo' => 'bar'], 'json')),
 		);
 
-		SerializeFormatEncoder::addSupportedType('neon');
+		SerializeFormatEncoder::addSupportedContentType('application/x-neon');
 		self::assertSame(
 			'a:1:{s:3:"foo";s:3:"bar";}',
-			$dataSource->toString(['foo' => 'bar'], 'neon'),
+			$dataSource->toString(['foo' => 'bar'], 'application/x-neon'),
 		);
 
 		self::assertSame(

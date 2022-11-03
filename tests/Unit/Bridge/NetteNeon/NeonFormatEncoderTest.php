@@ -79,19 +79,31 @@ NEON,
 		];
 	}
 
-	public function testSupportsFileType(): void
+	public function testSupportsContentType(): void
 	{
-		self::assertTrue(NeonFormatEncoder::supportsType('neon'));
-		self::assertTrue(NeonFormatEncoder::supportsType('application/x-neon'));
+		self::assertTrue(NeonFormatEncoder::supportsContentType('application/x-neon'));
 
-		self::assertFalse(NeonFormatEncoder::supportsType('anything'));
+		self::assertFalse(NeonFormatEncoder::supportsContentType('text/csv'));
+
+		self::assertSame(
+			[
+				'application/x-neon',
+			],
+			NeonFormatEncoder::getContentTypes(),
+		);
+	}
+
+	public function testSupportsFileExtension(): void
+	{
+		self::assertTrue(NeonFormatEncoder::supportsFileExtension('neon'));
+
+		self::assertFalse(NeonFormatEncoder::supportsFileExtension('csv'));
 
 		self::assertSame(
 			[
 				'neon',
-				'application/x-neon',
 			],
-			NeonFormatEncoder::getSupportedTypes(),
+			NeonFormatEncoder::getFileExtensions(),
 		);
 	}
 

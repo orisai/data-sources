@@ -10,27 +10,44 @@ use function unserialize;
 final class SerializeFormatEncoder implements FormatEncoder
 {
 
-	/** @var array<string> */
+	/** @var list<string> */
 	private static array $types = [
+		'text/serial',
+	];
+
+	/** @var list<string> */
+	private static array $extensions = [
 		'serial',
 	];
 
-	/**
-	 * @return array<string>
-	 */
-	public static function getSupportedTypes(): array
+	public static function getContentTypes(): array
 	{
 		return self::$types;
 	}
 
-	public static function supportsType(string $type): bool
+	public static function supportsContentType(string $type): bool
 	{
-		return in_array($type, self::getSupportedTypes(), true);
+		return in_array($type, self::getContentTypes(), true);
 	}
 
-	public static function addSupportedType(string $type): void
+	public static function addSupportedContentType(string $type): void
 	{
 		self::$types[] = $type;
+	}
+
+	public static function getFileExtensions(): array
+	{
+		return self::$extensions;
+	}
+
+	public static function supportsFileExtension(string $extension): bool
+	{
+		return in_array($extension, self::getFileExtensions(), true);
+	}
+
+	public static function addSupportedFileExtensions(string $extension): void
+	{
+		self::$extensions[] = $extension;
 	}
 
 	/**

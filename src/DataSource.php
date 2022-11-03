@@ -10,16 +10,21 @@ interface DataSource
 {
 
 	/**
-	 * @return array<string>
+	 * @return list<string>
 	 */
-	public function getSupportedTypes(): array;
+	public function getContentTypes(): array;
+
+	/**
+	 * @return list<string>
+	 */
+	public function getFileExtensions(): array;
 
 	/**
 	 * @return mixed
 	 * @throws NotSupportedType No encoder is available for given file type
 	 * @throws EncodingFailure Decoding failed due to unsupported or invalid data
 	 */
-	public function fromString(string $content, string $type);
+	public function fromString(string $content, string $typeOrExtension);
 
 	/**
 	 * @return mixed
@@ -34,7 +39,7 @@ interface DataSource
 	 * @throws NotSupportedType No encoder is available for given file type
 	 * @throws EncodingFailure Encoding failed due to unsupported or invalid data
 	 */
-	public function toString($data, string $type): string;
+	public function toString($data, string $typeOrExtension): string;
 
 	/**
 	 * @param mixed $data
