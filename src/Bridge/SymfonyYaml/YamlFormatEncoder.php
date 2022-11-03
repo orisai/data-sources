@@ -6,26 +6,18 @@ use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\DataSources\FormatEncoder;
 use Orisai\Utils\Dependencies\Dependencies;
 use Orisai\Utils\Dependencies\Exception\PackageRequired;
-use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Parser;
+use Symfony\Component\Yaml\Yaml;
 use function in_array;
 
 final class YamlFormatEncoder implements FormatEncoder
 {
-
-	private Parser $parser;
-
-	private Dumper $dumper;
 
 	public function __construct()
 	{
 		if (($deps = Dependencies::getNotLoadedPackages(['symfony/yaml'])) !== []) {
 			throw PackageRequired::forClass($deps, self::class);
 		}
-
-		$this->parser = new Parser();
-		$this->dumper = new Dumper(2);
 	}
 
 	public static function getContentTypes(): array
@@ -60,7 +52,7 @@ final class YamlFormatEncoder implements FormatEncoder
 	public function decode(string $content)
 	{
 		try {
-			return $this->parser->parse($content);
+			return Yaml::parse($content);
 		} catch (ParseException $exception) {
 			throw EncodingFailure::fromPrevious($exception);
 		}
@@ -71,7 +63,12 @@ final class YamlFormatEncoder implements FormatEncoder
 	 */
 	public function encode($content): string
 	{
-		return $this->dumper->dump($content, 512);
+		return Yaml::dump(
+			$content,
+			512,
+			2,
+			Yaml::DUMP_OBJECT_AS_MAP | Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE,
+		);
 	}
 
 }
