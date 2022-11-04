@@ -70,11 +70,7 @@ final class DefaultDataSource implements DataSource
 			$typesByEncoder[] = $encoder::getFileExtensions();
 		}
 
-		/**
-		 * @var list<string>
-		 *
-		 * @phpcsSuppress SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat not supported by rule
-		 */
+		/** @var list<string> */
 		return array_merge(...$typesByEncoder);
 	}
 
