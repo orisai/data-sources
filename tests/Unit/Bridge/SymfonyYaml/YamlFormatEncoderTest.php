@@ -2,6 +2,8 @@
 
 namespace Tests\Orisai\DataSources\Unit\Bridge\SymfonyYaml;
 
+use Composer\InstalledVersions;
+use Composer\Semver\VersionParser;
 use Generator;
 use Orisai\DataSources\Bridge\SymfonyYaml\YamlFormatEncoder;
 use Orisai\DataSources\Exception\EncodingFailure;
@@ -43,8 +45,9 @@ final class YamlFormatEncoderTest extends TestCase
 
 		$encoded = rtrim(str_replace("\n", PHP_EOL, $encoder->encode($data)), PHP_EOL);
 
-		self::assertSame(
-			<<<'YAML'
+		if (InstalledVersions::satisfies(new VersionParser(), 'symfony/yaml', '>=6.1.0')) {
+			self::assertSame(
+				<<<'YAML'
 0: null
 one: 1
 2: 2.2
@@ -62,8 +65,31 @@ three: three
 30: '&blong&'
 40: é
 YAML,
-			$encoded,
-		);
+				$encoded,
+			);
+		} else {
+			self::assertSame(
+				<<<'YAML'
+0: null
+one: 1
+2: 2.2
+three: three
+4: false
+5: true
+7:
+  foo: bar
+  0:
+    bar: baz
+8-text: text
+9: '<foo>'
+10: '''bar'''
+20: '"baz"'
+30: '&blong&'
+40: é
+YAML,
+				$encoded,
+			);
+		}
 
 		self::assertSame(
 			$data,
