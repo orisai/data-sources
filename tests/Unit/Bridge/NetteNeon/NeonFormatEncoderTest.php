@@ -79,12 +79,8 @@ NEON,
 		];
 	}
 
-	public function testSupportsContentType(): void
+	public function testGetContentTypes(): void
 	{
-		self::assertTrue(NeonFormatEncoder::supportsContentType('application/x-neon'));
-
-		self::assertFalse(NeonFormatEncoder::supportsContentType('text/csv'));
-
 		self::assertSame(
 			[
 				'application/x-neon',
@@ -93,12 +89,8 @@ NEON,
 		);
 	}
 
-	public function testSupportsFileExtension(): void
+	public function testGetFileExtensions(): void
 	{
-		self::assertTrue(NeonFormatEncoder::supportsFileExtension('neon'));
-
-		self::assertFalse(NeonFormatEncoder::supportsFileExtension('csv'));
-
 		self::assertSame(
 			[
 				'neon',

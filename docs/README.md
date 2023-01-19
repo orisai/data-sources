@@ -83,7 +83,10 @@ final class Example
 
 	public function checkAvailableFormats(): void
 	{
+		$this->dataSource->supportsContentType('application/json'); // bool
 		$this->dataSource->getContentTypes(); // list<string>, e.g. ['application/json', 'application/x-neon']
+
+		$this->dataSource->supportsFileExtension('json'); // bool
 		$this->dataSource->getFileExtensions(); // list<string>, e.g. ['json', 'neon']
 
 		try {
@@ -170,19 +173,9 @@ final class ExampleFormatEncoder implements FormatEncoder
 		return ['application/x-example'];
 	}
 
-	public static function supportsContentType(string $type): bool
-	{
-		return in_array($type, self::getContentTypes(), true);
-	}
-
 	public static function getFileExtensions(): array
 	{
 		return ['example'];
-	}
-
-	public static function supportsFileExtension(string $extension): bool
-	{
-		return in_array($extension, self::getFileExtensions(), true);
 	}
 
 	public function decode(string $content)

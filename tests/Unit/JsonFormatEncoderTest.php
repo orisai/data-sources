@@ -76,12 +76,8 @@ JSON,
 		);
 	}
 
-	public function testSupportsContentType(): void
+	public function testGetContentTypes(): void
 	{
-		self::assertTrue(JsonFormatEncoder::supportsContentType('application/json'));
-
-		self::assertFalse(JsonFormatEncoder::supportsContentType('text/csv'));
-
 		self::assertSame(
 			[
 				'application/json',
@@ -90,12 +86,8 @@ JSON,
 		);
 	}
 
-	public function testSupportsFileExtension(): void
+	public function testGetFileExtensions(): void
 	{
-		self::assertTrue(JsonFormatEncoder::supportsFileExtension('json'));
-
-		self::assertFalse(JsonFormatEncoder::supportsFileExtension('csv'));
-
 		self::assertSame(
 			[
 				'json',

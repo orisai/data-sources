@@ -12,14 +12,10 @@ interface FormatEncoder
 	 */
 	public static function getContentTypes(): array;
 
-	public static function supportsContentType(string $type): bool;
-
 	/**
 	 * @return list<string>
 	 */
 	public static function getFileExtensions(): array;
-
-	public static function supportsFileExtension(string $extension): bool;
 
 	/**
 	 * @return mixed

@@ -97,13 +97,8 @@ YAML,
 		);
 	}
 
-	public function testSupportsContentType(): void
+	public function testGetContentTypes(): void
 	{
-		self::assertTrue(YamlFormatEncoder::supportsContentType('application/x-yml'));
-		self::assertTrue(YamlFormatEncoder::supportsContentType('application/x-yaml'));
-
-		self::assertFalse(YamlFormatEncoder::supportsContentType('text/csv'));
-
 		self::assertSame(
 			[
 				'application/x-yml',
@@ -113,13 +108,8 @@ YAML,
 		);
 	}
 
-	public function testSupportsFileExtension(): void
+	public function testGetFileExtensions(): void
 	{
-		self::assertTrue(YamlFormatEncoder::supportsFileExtension('yml'));
-		self::assertTrue(YamlFormatEncoder::supportsFileExtension('yaml'));
-
-		self::assertFalse(YamlFormatEncoder::supportsFileExtension('csv'));
-
 		self::assertSame(
 			[
 				'yml',

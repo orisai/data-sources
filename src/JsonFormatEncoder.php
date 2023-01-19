@@ -6,7 +6,6 @@ use JsonException;
 use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\Utils\Dependencies\Dependencies;
 use Orisai\Utils\Dependencies\Exception\ExtensionRequired;
-use function in_array;
 use function json_decode;
 use function json_encode;
 use const JSON_BIGINT_AS_STRING;
@@ -33,21 +32,11 @@ final class JsonFormatEncoder implements FormatEncoder
 		];
 	}
 
-	public static function supportsContentType(string $type): bool
-	{
-		return in_array($type, self::getContentTypes(), true);
-	}
-
 	public static function getFileExtensions(): array
 	{
 		return [
 			'json',
 		];
-	}
-
-	public static function supportsFileExtension(string $extension): bool
-	{
-		return in_array($extension, self::getFileExtensions(), true);
 	}
 
 	/**

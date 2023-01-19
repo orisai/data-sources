@@ -28,11 +28,6 @@ final class YamlFormatEncoder implements FormatEncoder
 		];
 	}
 
-	public static function supportsContentType(string $type): bool
-	{
-		return in_array($type, self::getContentTypes(), true);
-	}
-
 	public static function getFileExtensions(): array
 	{
 		return [

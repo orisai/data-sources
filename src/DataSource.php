@@ -14,10 +14,14 @@ interface DataSource
 	 */
 	public function getContentTypes(): array;
 
+	public function supportsContentType(string $type): bool;
+
 	/**
 	 * @return list<string>
 	 */
 	public function getFileExtensions(): array;
+
+	public function supportsFileExtension(string $extension): bool;
 
 	/**
 	 * @return mixed

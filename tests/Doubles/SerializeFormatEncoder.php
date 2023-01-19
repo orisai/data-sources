@@ -3,7 +3,6 @@
 namespace Tests\Orisai\DataSources\Doubles;
 
 use Orisai\DataSources\FormatEncoder;
-use function in_array;
 use function serialize;
 use function unserialize;
 
@@ -25,11 +24,6 @@ final class SerializeFormatEncoder implements FormatEncoder
 		return self::$types;
 	}
 
-	public static function supportsContentType(string $type): bool
-	{
-		return in_array($type, self::getContentTypes(), true);
-	}
-
 	public static function addSupportedContentType(string $type): void
 	{
 		self::$types[] = $type;
@@ -38,11 +32,6 @@ final class SerializeFormatEncoder implements FormatEncoder
 	public static function getFileExtensions(): array
 	{
 		return self::$extensions;
-	}
-
-	public static function supportsFileExtension(string $extension): bool
-	{
-		return in_array($extension, self::getFileExtensions(), true);
 	}
 
 	public static function addSupportedFileExtensions(string $extension): void

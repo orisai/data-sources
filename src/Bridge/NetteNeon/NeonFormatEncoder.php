@@ -8,7 +8,6 @@ use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\DataSources\FormatEncoder;
 use Orisai\Utils\Dependencies\Dependencies;
 use Orisai\Utils\Dependencies\Exception\PackageRequired;
-use function in_array;
 
 final class NeonFormatEncoder implements FormatEncoder
 {
@@ -27,21 +26,11 @@ final class NeonFormatEncoder implements FormatEncoder
 		];
 	}
 
-	public static function supportsContentType(string $type): bool
-	{
-		return in_array($type, self::getContentTypes(), true);
-	}
-
 	public static function getFileExtensions(): array
 	{
 		return [
 			'neon',
 		];
-	}
-
-	public static function supportsFileExtension(string $extension): bool
-	{
-		return in_array($extension, self::getFileExtensions(), true);
 	}
 
 	/**

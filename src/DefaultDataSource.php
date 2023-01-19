@@ -11,6 +11,7 @@ use stdClass;
 use function array_merge;
 use function get_class;
 use function get_debug_type;
+use function in_array;
 use function is_array;
 use function is_object;
 use function is_resource;
@@ -34,7 +35,7 @@ final class DefaultDataSource implements DataSource
 	private function getFormatEncoderForMediaType(string $type): FormatEncoder
 	{
 		foreach ($this->encoderManager->getAll() as $encoder) {
-			if ($encoder::supportsContentType($type)) {
+			if (in_array($type, $encoder::getContentTypes(), true)) {
 				return $encoder;
 			}
 		}
@@ -48,7 +49,7 @@ final class DefaultDataSource implements DataSource
 	private function getFormatEncoderForFileExtension(string $extension): FormatEncoder
 	{
 		foreach ($this->encoderManager->getAll() as $encoder) {
-			if ($encoder::supportsFileExtension($extension)) {
+			if (in_array($extension, $encoder::getFileExtensions(), true)) {
 				return $encoder;
 			}
 		}
@@ -67,6 +68,11 @@ final class DefaultDataSource implements DataSource
 		return array_merge(...$typesByEncoder);
 	}
 
+	public function supportsContentType(string $type): bool
+	{
+		return in_array($type, $this->getContentTypes(), true);
+	}
+
 	public function getFileExtensions(): array
 	{
 		$typesByEncoder = [];
@@ -77,6 +83,11 @@ final class DefaultDataSource implements DataSource
 
 		/** @var list<string> */
 		return array_merge(...$typesByEncoder);
+	}
+
+	public function supportsFileExtension(string $extension): bool
+	{
+		return in_array($extension, $this->getFileExtensions(), true);
 	}
 
 	/**

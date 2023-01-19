@@ -183,14 +183,21 @@ MSG);
 	public function testSupportedContentTypes(): void
 	{
 		$manager = new DefaultFormatEncoderManager();
-		$manager->addEncoder(new SerializeFormatEncoder());
 		$manager->addEncoder(new JsonFormatEncoder());
+		$manager->addEncoder(new YamlFormatEncoder());
 		$source = new DefaultDataSource($manager);
+
+		self::assertTrue($source->supportsContentType('application/json'));
+		self::assertTrue($source->supportsContentType('application/x-yml'));
+		self::assertTrue($source->supportsContentType('application/x-yaml'));
+
+		self::assertFalse($source->supportsContentType('text/csv'));
 
 		self::assertSame(
 			[
-				'text/serial',
 				'application/json',
+				'application/x-yml',
+				'application/x-yaml',
 			],
 			$source->getContentTypes(),
 		);
@@ -199,14 +206,21 @@ MSG);
 	public function testSupportedExtensions(): void
 	{
 		$manager = new DefaultFormatEncoderManager();
-		$manager->addEncoder(new SerializeFormatEncoder());
 		$manager->addEncoder(new JsonFormatEncoder());
+		$manager->addEncoder(new YamlFormatEncoder());
 		$source = new DefaultDataSource($manager);
+
+		self::assertTrue($source->supportsFileExtension('json'));
+		self::assertTrue($source->supportsFileExtension('yml'));
+		self::assertTrue($source->supportsFileExtension('yaml'));
+
+		self::assertFalse($source->supportsFileExtension('csv'));
 
 		self::assertSame(
 			[
-				'serial',
 				'json',
+				'yml',
+				'yaml',
 			],
 			$source->getFileExtensions(),
 		);
