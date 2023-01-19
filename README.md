@@ -38,3 +38,19 @@
 <p>
 
 ##
+
+```php
+use Orisai\DataSources\DataSource;
+use Orisai\DataSources\Exception\EncodingFailure;
+use Orisai\DataSources\Exception\NotSupportedType;
+
+try {
+	$dataSource->encode('data', 'application/json' /* or just 'json' */); // json-encoded string
+} catch (NotSupportedType $exception) {
+	// Requested type is not supported
+	$exception->getRequestedType(); // 'application/json'
+	$exception->getSupportedTypes(); // content types or file extensions, depending on what was requested
+} catch (EncodingFailure $exception) {
+	// Encoding failed
+}
+```
