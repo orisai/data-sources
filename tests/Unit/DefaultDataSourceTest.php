@@ -24,9 +24,8 @@ final class DefaultDataSourceTest extends TestCase
 
 	public function testContent(): void
 	{
-		$manager = new DefaultFormatEncoderManager([
-			new SerializeFormatEncoder(),
-		]);
+		$manager = new DefaultFormatEncoderManager();
+		$manager->addEncoder(new SerializeFormatEncoder());
 		$source = new DefaultDataSource($manager);
 
 		$content = $source->encode(['foo' => 'bar'], 'serial');
@@ -37,9 +36,8 @@ final class DefaultDataSourceTest extends TestCase
 
 	public function testFiles(): void
 	{
-		$manager = new DefaultFormatEncoderManager([
-			new SerializeFormatEncoder(),
-		]);
+		$manager = new DefaultFormatEncoderManager();
+		$manager->addEncoder(new SerializeFormatEncoder());
 		$source = new DefaultDataSource($manager);
 
 		$dir = __DIR__ . '/../../var/tests/' . md5(self::class);
@@ -56,9 +54,8 @@ final class DefaultDataSourceTest extends TestCase
 
 	public function testNoExtension(): void
 	{
-		$manager = new DefaultFormatEncoderManager([
-			new SerializeFormatEncoder(),
-		]);
+		$manager = new DefaultFormatEncoderManager();
+		$manager->addEncoder(new SerializeFormatEncoder());
 		$source = new DefaultDataSource($manager);
 
 		$this->expectException(NotSupportedType::class);
@@ -69,9 +66,8 @@ final class DefaultDataSourceTest extends TestCase
 
 	public function testEncodingFailure(): void
 	{
-		$manager = new DefaultFormatEncoderManager([
-			new JsonFormatEncoder(),
-		]);
+		$manager = new DefaultFormatEncoderManager();
+		$manager->addEncoder(new JsonFormatEncoder());
 		$source = new DefaultDataSource($manager);
 
 		$this->expectException(EncodingFailure::class);
@@ -85,9 +81,8 @@ MSG);
 
 	public function testDecodingFailure(): void
 	{
-		$manager = new DefaultFormatEncoderManager([
-			new JsonFormatEncoder(),
-		]);
+		$manager = new DefaultFormatEncoderManager();
+		$manager->addEncoder(new JsonFormatEncoder());
 		$source = new DefaultDataSource($manager);
 
 		$this->expectException(EncodingFailure::class);
@@ -107,12 +102,11 @@ MSG);
 	public function testEncoding($data): void
 	{
 		$types = ['serial', 'neon', 'yaml', 'json'];
-		$manager = new DefaultFormatEncoderManager([
-			new SerializeFormatEncoder(),
-			new NeonFormatEncoder(),
-			new YamlFormatEncoder(),
-			new JsonFormatEncoder(),
-		]);
+		$manager = new DefaultFormatEncoderManager();
+		$manager->addEncoder(new SerializeFormatEncoder());
+		$manager->addEncoder(new NeonFormatEncoder());
+		$manager->addEncoder(new YamlFormatEncoder());
+		$manager->addEncoder(new JsonFormatEncoder());
 		$source = new DefaultDataSource($manager);
 
 		foreach ($types as $type) {
@@ -166,9 +160,8 @@ MSG);
 
 	public function testNoEncoder(): void
 	{
-		$manager = new DefaultFormatEncoderManager([
-			new SerializeFormatEncoder(),
-		]);
+		$manager = new DefaultFormatEncoderManager();
+		$manager->addEncoder(new SerializeFormatEncoder());
 		$source = new DefaultDataSource($manager);
 
 		$exception = null;
@@ -189,10 +182,9 @@ MSG);
 
 	public function testSupportedContentTypes(): void
 	{
-		$manager = new DefaultFormatEncoderManager([
-			new SerializeFormatEncoder(),
-			new JsonFormatEncoder(),
-		]);
+		$manager = new DefaultFormatEncoderManager();
+		$manager->addEncoder(new SerializeFormatEncoder());
+		$manager->addEncoder(new JsonFormatEncoder());
 		$source = new DefaultDataSource($manager);
 
 		self::assertSame(
@@ -206,10 +198,9 @@ MSG);
 
 	public function testSupportedExtensions(): void
 	{
-		$manager = new DefaultFormatEncoderManager([
-			new SerializeFormatEncoder(),
-			new JsonFormatEncoder(),
-		]);
+		$manager = new DefaultFormatEncoderManager();
+		$manager->addEncoder(new SerializeFormatEncoder());
+		$manager->addEncoder(new JsonFormatEncoder());
 		$source = new DefaultDataSource($manager);
 
 		self::assertSame(
@@ -234,9 +225,8 @@ MSG);
 			$data = fopen(__FILE__, 'r');
 		}
 
-		$manager = new DefaultFormatEncoderManager([
-			new SerializeFormatEncoder(),
-		]);
+		$manager = new DefaultFormatEncoderManager();
+		$manager->addEncoder(new SerializeFormatEncoder());
 		$source = new DefaultDataSource($manager);
 
 		$this->expectException(EncodingFailure::class);

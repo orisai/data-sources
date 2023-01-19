@@ -26,10 +26,11 @@ use Orisai\DataSources\DefaultDataSource;
 use Orisai\DataSources\DefaultFormatEncoderManager;
 use Orisai\DataSources\JsonFormatEncoder;
 
-$dataSource = new DefaultDataSource(new DefaultFormatEncoderManager([
-	new JsonFormatEncoder(),
-	new YamlFormatEncoder(), // requires symfony/yaml
-]));
+$manager = new DefaultFormatEncoderManager();
+$manager->addEncoder(new JsonFormatEncoder());
+$manager->addEncoder(new YamlFormatEncoder()); // requires symfony/yaml
+
+$dataSource = new DefaultDataSource($manager);
 ```
 
 ### Data source

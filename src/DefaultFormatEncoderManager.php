@@ -8,14 +8,11 @@ final class DefaultFormatEncoderManager implements FormatEncoderManager
 {
 
 	/** @var list<FormatEncoder> */
-	private array $encoders;
+	private array $encoders = [];
 
-	/**
-	 * @param list<FormatEncoder> $encoders
-	 */
-	public function __construct(array $encoders)
+	public function addEncoder(FormatEncoder $encoder): void
 	{
-		$this->encoders = $encoders;
+		$this->encoders[] = $encoder;
 	}
 
 	public function getAll(): Generator
