@@ -29,10 +29,10 @@ final class DefaultDataSourceTest extends TestCase
 		]);
 		$source = new DefaultDataSource($manager);
 
-		$content = $source->toString(['foo' => 'bar'], 'serial');
+		$content = $source->encode(['foo' => 'bar'], 'serial');
 		self::assertSame('a:1:{s:3:"foo";s:3:"bar";}', $content);
 
-		self::assertSame(['foo' => 'bar'], $source->fromString($content, 'serial'));
+		self::assertSame(['foo' => 'bar'], $source->decode($content, 'serial'));
 	}
 
 	public function testFiles(): void
@@ -45,11 +45,11 @@ final class DefaultDataSourceTest extends TestCase
 		$dir = __DIR__ . '/../../var/tests/' . md5(self::class);
 		$file = $dir . '/file.serial';
 
-		$source->toFile($file, ['foo' => 'bar']);
+		$source->encodeToFile($file, ['foo' => 'bar']);
 		$content = FileSystem::read($file);
 		self::assertSame('a:1:{s:3:"foo";s:3:"bar";}', $content);
 
-		self::assertSame(['foo' => 'bar'], $source->fromFile($file));
+		self::assertSame(['foo' => 'bar'], $source->decodeFromFile($file));
 
 		FileSystem::delete($dir);
 	}
@@ -64,7 +64,7 @@ final class DefaultDataSourceTest extends TestCase
 		$this->expectException(NotSupportedType::class);
 		$this->expectExceptionMessage("File '/foo' has no extension.");
 
-		$source->toFile('/foo', ['foo' => 'bar']);
+		$source->encodeToFile('/foo', ['foo' => 'bar']);
 	}
 
 	public function testEncodingFailure(): void
@@ -80,7 +80,7 @@ Context: Encoding raw data into string of type 'json'.
 Problem: Malformed UTF-8 characters, possibly incorrectly encoded
 MSG);
 
-		$source->toString(["utf\xFF"], 'json');
+		$source->encode(["utf\xFF"], 'json');
 	}
 
 	public function testDecodingFailure(): void
@@ -96,7 +96,7 @@ Context: Decoding content of type 'json' into raw data.
 Problem: Syntax error
 MSG);
 
-		$source->fromString('{', 'json');
+		$source->decode('{', 'json');
 	}
 
 	/**
@@ -116,8 +116,8 @@ MSG);
 		$source = new DefaultDataSource($manager);
 
 		foreach ($types as $type) {
-			$content = $source->toString($data, $type);
-			self::assertSame($data, $source->fromString($content, $type));
+			$content = $source->encode($data, $type);
+			self::assertSame($data, $source->decode($content, $type));
 		}
 	}
 
@@ -173,7 +173,7 @@ MSG);
 
 		$exception = null;
 		try {
-			$source->toString(['foo' => 'bar'], 'neon');
+			$source->encode(['foo' => 'bar'], 'neon');
 		} catch (NotSupportedType $exception) {
 			// Handled below
 		}
@@ -249,7 +249,7 @@ MSG,
 		);
 
 		Message::$lineLength = 150;
-		$source->toString($data, 'serial');
+		$source->encode($data, 'serial');
 	}
 
 	public function provideUnsupportedData(): Generator

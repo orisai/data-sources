@@ -59,17 +59,17 @@ final class DataSourceExtensionTest extends TestCase
     "foo": "bar"
 }
 JSON,
-			str_replace("\n", PHP_EOL, $dataSource->toString(['foo' => 'bar'], 'json')),
+			str_replace("\n", PHP_EOL, $dataSource->encode(['foo' => 'bar'], 'json')),
 		);
 
 		self::assertSame(
 			'foo: bar',
-			rtrim($dataSource->toString(['foo' => 'bar'], 'neon'), "\n"),
+			rtrim($dataSource->encode(['foo' => 'bar'], 'neon'), "\n"),
 		);
 
 		self::assertSame(
 			'foo: bar',
-			rtrim($dataSource->toString(['foo' => 'bar'], 'yaml'), "\n"),
+			rtrim($dataSource->encode(['foo' => 'bar'], 'yaml'), "\n"),
 		);
 	}
 
@@ -100,23 +100,23 @@ JSON,
     "foo": "bar"
 }
 JSON,
-			str_replace("\n", PHP_EOL, $dataSource->toString(['foo' => 'bar'], 'json')),
+			str_replace("\n", PHP_EOL, $dataSource->encode(['foo' => 'bar'], 'json')),
 		);
 
 		SerializeFormatEncoder::addSupportedContentType('application/x-neon');
 		self::assertSame(
 			'a:1:{s:3:"foo";s:3:"bar";}',
-			$dataSource->toString(['foo' => 'bar'], 'application/x-neon'),
+			$dataSource->encode(['foo' => 'bar'], 'application/x-neon'),
 		);
 
 		self::assertSame(
 			'foo: bar',
-			rtrim($dataSource->toString(['foo' => 'bar'], 'yaml'), "\n"),
+			rtrim($dataSource->encode(['foo' => 'bar'], 'yaml'), "\n"),
 		);
 
 		self::assertSame(
 			'a:1:{s:3:"foo";s:3:"bar";}',
-			$dataSource->toString(['foo' => 'bar'], 'serial'),
+			$dataSource->encode(['foo' => 'bar'], 'serial'),
 		);
 	}
 

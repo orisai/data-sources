@@ -84,7 +84,7 @@ final class DefaultDataSource implements DataSource
 	 * @throws NotSupportedType
 	 * @throws EncodingFailure
 	 */
-	public function fromString(string $content, string $typeOrExtension)
+	public function decode(string $content, string $typeOrExtension)
 	{
 		$isMediaType = str_contains($typeOrExtension, '/');
 		$source = $isMediaType
@@ -110,12 +110,10 @@ final class DefaultDataSource implements DataSource
 	 * @throws NotSupportedType
 	 * @throws EncodingFailure
 	 */
-	public function fromFile(string $file)
+	public function decodeFromFile(string $file)
 	{
-		$content = FileSystem::read($file);
-
-		return $this->fromString(
-			$content,
+		return $this->decode(
+			FileSystem::read($file),
 			$this->getFileExtension($file),
 		);
 	}
@@ -125,7 +123,7 @@ final class DefaultDataSource implements DataSource
 	 * @throws NotSupportedType
 	 * @throws EncodingFailure
 	 */
-	public function toString($data, string $typeOrExtension): string
+	public function encode($data, string $typeOrExtension): string
 	{
 		$isMediaType = str_contains($typeOrExtension, '/');
 		$source = $isMediaType
@@ -152,10 +150,15 @@ final class DefaultDataSource implements DataSource
 	 * @throws IOException
 	 * @throws EncodingFailure
 	 */
-	public function toFile(string $file, $data): void
+	public function encodeToFile(string $file, $data): void
 	{
-		$content = $this->toString($data, $this->getFileExtension($file));
-		FileSystem::write($file, $content);
+		FileSystem::write(
+			$file,
+			$this->encode(
+				$data,
+				$this->getFileExtension($file),
+			),
+		);
 	}
 
 	private function getFileExtension(string $file): string

@@ -24,7 +24,7 @@ interface DataSource
 	 * @throws NotSupportedType No encoder is available for given file type
 	 * @throws EncodingFailure Decoding failed due to unsupported or invalid data
 	 */
-	public function fromString(string $content, string $typeOrExtension);
+	public function decode(string $content, string $typeOrExtension);
 
 	/**
 	 * @return mixed
@@ -32,14 +32,14 @@ interface DataSource
 	 * @throws IOException File is not readable
 	 * @throws EncodingFailure Decoding failed due to unsupported or invalid data
 	 */
-	public function fromFile(string $file);
+	public function decodeFromFile(string $file);
 
 	/**
 	 * @param mixed $data
 	 * @throws NotSupportedType No encoder is available for given file type
 	 * @throws EncodingFailure Encoding failed due to unsupported or invalid data
 	 */
-	public function toString($data, string $typeOrExtension): string;
+	public function encode($data, string $typeOrExtension): string;
 
 	/**
 	 * @param mixed $data
@@ -47,6 +47,6 @@ interface DataSource
 	 * @throws IOException File is not writable
 	 * @throws EncodingFailure Encoding failed due to unsupported or invalid data
 	 */
-	public function toFile(string $file, $data): void;
+	public function encodeToFile(string $file, $data): void;
 
 }
