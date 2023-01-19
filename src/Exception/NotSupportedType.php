@@ -15,10 +15,10 @@ final class NotSupportedType extends LogicalException
 	/**
 	 * @param array<string> $supportedTypes
 	 */
-	public static function create(string $expectedType, array $supportedTypes): self
+	public static function forUnknownType(string $expectedType, array $supportedTypes): self
 	{
 		$self = new self();
-		$self->withMessage("No encoder is available for type {$expectedType}.");
+		$self->withMessage("No encoder is available for type '$expectedType'.");
 
 		$self->expectedType = $expectedType;
 		$self->supportedTypes = $supportedTypes;
@@ -26,7 +26,21 @@ final class NotSupportedType extends LogicalException
 		return $self;
 	}
 
-	public function getExpectedType(): string
+	/**
+	 * @param array<string> $supportedTypes
+	 */
+	public static function forNoFileExtension(string $file, array $supportedTypes): self
+	{
+		$self = new self();
+		$self->withMessage("File '$file' has no extension.");
+
+		$self->expectedType = '';
+		$self->supportedTypes = $supportedTypes;
+
+		return $self;
+	}
+
+	public function getRequestedType(): string
 	{
 		return $this->expectedType;
 	}

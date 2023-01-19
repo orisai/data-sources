@@ -11,7 +11,6 @@ use Orisai\DataSources\DefaultFormatEncoderManager;
 use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\DataSources\Exception\NotSupportedType;
 use Orisai\DataSources\JsonFormatEncoder;
-use Orisai\Exceptions\Logic\InvalidArgument;
 use PHPUnit\Framework\TestCase;
 use Tests\Orisai\DataSources\Doubles\SerializeFormatEncoder;
 use function md5;
@@ -58,8 +57,8 @@ final class DefaultDataSourceTest extends TestCase
 		]);
 		$source = new DefaultDataSource($manager);
 
-		$this->expectException(InvalidArgument::class);
-		$this->expectExceptionMessage('File /foo has no extension.');
+		$this->expectException(NotSupportedType::class);
+		$this->expectExceptionMessage("File '/foo' has no extension.");
 
 		$source->toFile('/foo', ['foo' => 'bar']);
 	}
@@ -73,7 +72,7 @@ final class DefaultDataSourceTest extends TestCase
 
 		$this->expectException(EncodingFailure::class);
 		$this->expectExceptionMessage(<<<'MSG'
-Context: Trying to encode data into json.
+Context: Encoding raw data into string of type 'json'.
 Problem: Malformed UTF-8 characters, possibly incorrectly encoded
 MSG);
 
@@ -89,7 +88,7 @@ MSG);
 
 		$this->expectException(EncodingFailure::class);
 		$this->expectExceptionMessage(<<<'MSG'
-Context: Trying to decode json into data.
+Context: Decoding content of type 'json' into raw data.
 Problem: Syntax error
 MSG);
 
@@ -176,8 +175,8 @@ MSG);
 		}
 
 		self::assertInstanceOf(NotSupportedType::class, $exception);
-		self::assertSame('No encoder is available for type neon.', $exception->getMessage());
-		self::assertSame('neon', $exception->getExpectedType());
+		self::assertSame("No encoder is available for type 'neon'.", $exception->getMessage());
+		self::assertSame('neon', $exception->getRequestedType());
 		self::assertSame(
 			['serial'],
 			$exception->getSupportedTypes(),

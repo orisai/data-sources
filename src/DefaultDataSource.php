@@ -6,7 +6,6 @@ use Nette\IOException;
 use Nette\Utils\FileSystem;
 use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\DataSources\Exception\NotSupportedType;
-use Orisai\Exceptions\Logic\InvalidArgument;
 use Orisai\Exceptions\Message;
 use function array_merge;
 use function pathinfo;
@@ -34,7 +33,7 @@ final class DefaultDataSource implements DataSource
 			}
 		}
 
-		throw NotSupportedType::create($type, $this->getContentTypes());
+		throw NotSupportedType::forUnknownType($type, $this->getContentTypes());
 	}
 
 	/**
@@ -48,7 +47,7 @@ final class DefaultDataSource implements DataSource
 			}
 		}
 
-		throw NotSupportedType::create($extension, $this->getFileExtensions());
+		throw NotSupportedType::forUnknownType($extension, $this->getFileExtensions());
 	}
 
 	public function getContentTypes(): array
@@ -81,7 +80,8 @@ final class DefaultDataSource implements DataSource
 	 */
 	public function fromString(string $content, string $typeOrExtension)
 	{
-		$source = str_contains($typeOrExtension, '/')
+		$isMediaType = str_contains($typeOrExtension, '/');
+		$source = $isMediaType
 			? $this->getFormatEncoderForMediaType($typeOrExtension)
 			: $this->getFormatEncoderForFileExtension($typeOrExtension);
 
@@ -89,7 +89,7 @@ final class DefaultDataSource implements DataSource
 			$data = $source->decode($content);
 		} catch (EncodingFailure $exception) {
 			$message = Message::create()
-				->withContext("Trying to decode {$typeOrExtension} into data.")
+				->withContext("Decoding content of type '$typeOrExtension' into raw data.")
 				->withProblem($exception->getMessage());
 
 			throw $exception
@@ -121,7 +121,8 @@ final class DefaultDataSource implements DataSource
 	 */
 	public function toString($data, string $typeOrExtension): string
 	{
-		$source = str_contains($typeOrExtension, '/')
+		$isMediaType = str_contains($typeOrExtension, '/');
+		$source = $isMediaType
 			? $this->getFormatEncoderForMediaType($typeOrExtension)
 			: $this->getFormatEncoderForFileExtension($typeOrExtension);
 
@@ -129,7 +130,7 @@ final class DefaultDataSource implements DataSource
 			return $source->encode($data);
 		} catch (EncodingFailure $exception) {
 			$message = Message::create()
-				->withContext("Trying to encode data into {$typeOrExtension}.")
+				->withContext("Encoding raw data into string of type '$typeOrExtension'.")
 				->withProblem($exception->getMessage());
 
 			throw $exception
@@ -154,8 +155,7 @@ final class DefaultDataSource implements DataSource
 		$ext = pathinfo($file, PATHINFO_EXTENSION);
 
 		if ($ext === '') {
-			throw InvalidArgument::create()
-				->withMessage("File {$file} has no extension.");
+			throw NotSupportedType::forNoFileExtension($file, $this->getFileExtensions());
 		}
 
 		return $ext;
