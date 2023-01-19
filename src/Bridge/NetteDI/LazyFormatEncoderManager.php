@@ -2,6 +2,8 @@
 
 namespace Orisai\DataSources\Bridge\NetteDI;
 
+use Generator;
+use Nette\DI\Container;
 use OriNette\DI\Services\ServiceManager;
 use Orisai\DataSources\FormatEncoder;
 use Orisai\DataSources\FormatEncoderManager;
@@ -9,24 +11,30 @@ use Orisai\DataSources\FormatEncoderManager;
 final class LazyFormatEncoderManager extends ServiceManager implements FormatEncoderManager
 {
 
-	/** @var array<FormatEncoder>|null */
-	private ?array $encoders = null;
+	/** @var list<FormatEncoder> */
+	private array $encoders = [];
 
-	/**
-	 * @return array<FormatEncoder>
-	 */
-	public function getAll(): array
+	/** @var array<int, int|string> */
+	private array $keys;
+
+	public function __construct(array $serviceMap, Container $container)
 	{
-		if ($this->encoders !== null) {
-			return $this->encoders;
+		parent::__construct($serviceMap, $container);
+		$this->keys = $this->getKeys();
+	}
+
+	public function getAll(): Generator
+	{
+		foreach ($this->encoders as $encoder) {
+			yield $encoder;
 		}
 
-		$encoders = [];
-		foreach ($this->getKeys() as $key) {
-			$encoders[$key] = $this->getTypedServiceOrThrow($key, FormatEncoder::class);
-		}
+		foreach ($this->keys as $i => $key) {
+			$this->encoders[] = $encoder = $this->getTypedServiceOrThrow($key, FormatEncoder::class);
+			unset($this->keys[$i]);
 
-		return $this->encoders = $encoders;
+			yield $encoder;
+		}
 	}
 
 }

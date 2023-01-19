@@ -2,26 +2,27 @@
 
 namespace Orisai\DataSources;
 
+use Generator;
+
 final class DefaultFormatEncoderManager implements FormatEncoderManager
 {
 
-	/** @var array<FormatEncoder> */
+	/** @var list<FormatEncoder> */
 	private array $encoders;
 
 	/**
-	 * @param array<FormatEncoder> $encoders
+	 * @param list<FormatEncoder> $encoders
 	 */
 	public function __construct(array $encoders)
 	{
 		$this->encoders = $encoders;
 	}
 
-	/**
-	 * @return array<FormatEncoder>
-	 */
-	public function getAll(): array
+	public function getAll(): Generator
 	{
-		return $this->encoders;
+		foreach ($this->encoders as $encoder) {
+			yield $encoder;
+		}
 	}
 
 }

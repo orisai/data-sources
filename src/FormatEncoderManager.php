@@ -2,12 +2,14 @@
 
 namespace Orisai\DataSources;
 
+use Generator;
+
 interface FormatEncoderManager
 {
 
 	/**
-	 * @return array<FormatEncoder>
+	 * @return Generator<FormatEncoder>
 	 */
-	public function getAll(): array;
+	public function getAll(): Generator;
 
 }
