@@ -7,7 +7,13 @@ use Nette\Utils\FileSystem;
 use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\DataSources\Exception\NotSupportedType;
 use Orisai\Exceptions\Message;
+use stdClass;
 use function array_merge;
+use function get_class;
+use function get_debug_type;
+use function is_array;
+use function is_object;
+use function is_resource;
 use function pathinfo;
 use function str_contains;
 use const PATHINFO_EXTENSION;
@@ -126,6 +132,8 @@ final class DefaultDataSource implements DataSource
 			? $this->getFormatEncoderForMediaType($typeOrExtension)
 			: $this->getFormatEncoderForFileExtension($typeOrExtension);
 
+		$this->checkData($data, $typeOrExtension);
+
 		try {
 			return $source->encode($data);
 		} catch (EncodingFailure $exception) {
@@ -159,6 +167,36 @@ final class DefaultDataSource implements DataSource
 		}
 
 		return $ext;
+	}
+
+	/**
+	 * @param mixed $data
+	 * @throws EncodingFailure
+	 */
+	private function checkData($data, string $typeOrExtension): void
+	{
+		if ($data instanceof stdClass && get_class($data) === stdClass::class) {
+			$data = (array) $data;
+		}
+
+		if (is_array($data)) {
+			foreach ($data as $value) {
+				$this->checkData($value, $typeOrExtension);
+			}
+
+			return;
+		}
+
+		if (is_object($data) || is_resource($data)) {
+			$type = get_debug_type($data);
+			$message = Message::create()
+				->withContext("Encoding raw data into string of type '$typeOrExtension'.")
+				->withProblem("Data contains PHP type '$type', which is not allowed.")
+				->withSolution('Change type to one of supported - scalar, null, array or stdClass.');
+
+			throw EncodingFailure::create()
+				->withMessage($message);
+		}
 	}
 
 }

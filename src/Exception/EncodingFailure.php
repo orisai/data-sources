@@ -8,6 +8,11 @@ use Throwable;
 final class EncodingFailure extends LogicalException
 {
 
+	public static function create(): self
+	{
+		return new self();
+	}
+
 	public static function fromPrevious(Throwable $previous): self
 	{
 		$self = new self();

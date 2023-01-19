@@ -11,8 +11,12 @@ use Orisai\DataSources\DefaultFormatEncoderManager;
 use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\DataSources\Exception\NotSupportedType;
 use Orisai\DataSources\JsonFormatEncoder;
+use Orisai\Exceptions\Logic\InvalidArgument;
+use Orisai\Exceptions\Message;
 use PHPUnit\Framework\TestCase;
 use Tests\Orisai\DataSources\Doubles\SerializeFormatEncoder;
+use Tests\Orisai\DataSources\Doubles\StdClassChild;
+use function fopen;
 use function md5;
 
 final class DefaultDataSourceTest extends TestCase
@@ -215,6 +219,76 @@ MSG);
 			],
 			$source->getFileExtensions(),
 		);
+	}
+
+	/**
+	 * @param mixed $data
+	 *
+	 * @runInSeparateProcess
+	 * @dataProvider provideUnsupportedData
+	 */
+	public function testUnsupportedData($data, string $unsupportedType): void
+	{
+		// Workaround - yielded resource is for some reason cast to 0
+		if ($data === 'resource') {
+			$data = fopen(__FILE__, 'r');
+		}
+
+		$manager = new DefaultFormatEncoderManager([
+			new SerializeFormatEncoder(),
+		]);
+		$source = new DefaultDataSource($manager);
+
+		$this->expectException(EncodingFailure::class);
+		$this->expectExceptionMessage(
+			<<<MSG
+Context: Encoding raw data into string of type 'serial'.
+Problem: Data contains PHP type '$unsupportedType', which is not allowed.
+Solution: Change type to one of supported - scalar, null, array or stdClass.
+MSG,
+		);
+
+		Message::$lineLength = 150;
+		$source->toString($data, 'serial');
+	}
+
+	public function provideUnsupportedData(): Generator
+	{
+		yield [
+			new StdClassChild(),
+			StdClassChild::class,
+		];
+
+		yield [
+			[
+				'a' => 'b',
+				'foo' => [
+					'bar' => [
+						new StdClassChild(),
+					],
+				],
+			],
+			StdClassChild::class,
+		];
+
+		yield [InvalidArgument::create(), InvalidArgument::class];
+
+		yield [
+			[
+				'a' => 'b',
+				'foo' => [
+					'bar' => [
+						InvalidArgument::create(),
+					],
+				],
+			],
+			InvalidArgument::class,
+		];
+
+		yield [
+			'resource',
+			'resource (stream)',
+		];
 	}
 
 }

@@ -9,7 +9,14 @@ use PHPUnit\Framework\TestCase;
 final class EncodingFailureTest extends TestCase
 {
 
-	public function test(): void
+	public function testCreate(): void
+	{
+		$e = EncodingFailure::create();
+		self::assertSame('', $e->getMessage());
+		self::assertNull($e->getPrevious());
+	}
+
+	public function testFromPrevious(): void
 	{
 		$previous = new Exception('some error');
 		$e = EncodingFailure::fromPrevious($previous);
