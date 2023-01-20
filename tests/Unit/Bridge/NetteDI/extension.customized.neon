@@ -1,8 +1,0 @@
-extensions:
-	dataSource: Orisai\DataSources\Bridge\NetteDI\DataSourceExtension
-
-dataSource:
-	encoders:
-		neon:
-			factory: Tests\Orisai\DataSources\Doubles\SerializeFormatEncoder()
-		serial: Tests\Orisai\DataSources\Doubles\SerializeFormatEncoder()
