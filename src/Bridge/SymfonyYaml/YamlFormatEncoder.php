@@ -36,11 +36,6 @@ final class YamlFormatEncoder implements FormatEncoder
 		];
 	}
 
-	public static function supportsFileExtension(string $extension): bool
-	{
-		return in_array($extension, self::getFileExtensions(), true);
-	}
-
 	/**
 	 * @return mixed
 	 */
