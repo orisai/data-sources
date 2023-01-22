@@ -47,7 +47,7 @@ final class JsonFormatEncoder implements FormatEncoder
 		try {
 			return json_decode(
 				$content,
-				true,
+				false,
 				512,
 				JSON_THROW_ON_ERROR | JSON_BIGINT_AS_STRING,
 			);

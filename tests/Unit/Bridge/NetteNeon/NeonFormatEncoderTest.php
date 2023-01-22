@@ -9,6 +9,7 @@ use Orisai\DataSources\Exception\EncodingFailure;
 use Orisai\Utils\Dependencies\DependenciesTester;
 use Orisai\Utils\Dependencies\Exception\PackageRequired;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use function rtrim;
 use function str_replace;
 use const PHP_EOL;
@@ -17,7 +18,7 @@ final class NeonFormatEncoderTest extends TestCase
 {
 
 	/**
-	 * @param mixed  $data
+	 * @param mixed $data
 	 *
 	 * @dataProvider provideEncodeAndDecode
 	 */
@@ -28,7 +29,7 @@ final class NeonFormatEncoderTest extends TestCase
 		$encoded = rtrim(str_replace("\n", PHP_EOL, $encoder->encode($data)), PHP_EOL);
 
 		self::assertSame($neon, $encoded);
-		self::assertSame($data, $encoder->decode($encoded));
+		self::assertEquals($data, $encoder->decode($encoded));
 	}
 
 	/**
@@ -56,6 +57,13 @@ final class NeonFormatEncoderTest extends TestCase
 				20 => '"baz"',
 				30 => '&blong&',
 				40 => "\xc3\xa9",
+				41 => new stdClass(),
+				42 => (object) [
+					'foo' => 1,
+					'bar' => 2,
+				],
+				43 => [],
+				44 => "multi\nline",
 			],
 			<<<'NEON'
 - null
@@ -75,7 +83,33 @@ three: three
 20: '"baz"'
 30: &blong&
 40: é
+41: object()
+42: object(foo: 1, bar: 2)
+43: []
+44: '''
+	multi
+	line
+'''
 NEON,
+		];
+
+		yield [
+			[
+				'foo' => (object) [
+					0 => 'a',
+					'b' => 1,
+					2 => 'c',
+					3 => '4',
+					5 => (object) [
+						'a' => 'b',
+						'c' => (object) [
+							'd',
+							'e',
+						],
+					],
+				],
+			],
+			"foo: object(a, b: 1, 2: c, 3: '4', 5: object(a: b, c: object(d, e)))",
 		];
 	}
 
@@ -102,7 +136,7 @@ NEON,
 	/**
 	 * @dataProvider provideDecodingFailure
 	 */
-	public function testDecodingFailure(string $data, string $errorMessage): void
+	public function testDecodingFailure(string $data, string $errorMessage, bool $hasPrevious): void
 	{
 		$encoder = new NeonFormatEncoder();
 
@@ -118,10 +152,14 @@ NEON,
 			$errorMessage,
 			$exception->getMessage(),
 		);
-		self::assertInstanceOf(
-			Exception::class,
-			$exception->getPrevious(),
-		);
+		if ($hasPrevious) {
+			self::assertInstanceOf(
+				Exception::class,
+				$exception->getPrevious(),
+			);
+		} else {
+			self::assertNull($exception->getPrevious());
+		}
 	}
 
 	/**
@@ -132,11 +170,25 @@ NEON,
 		yield [
 			"Hello\nWorld",
 			"Unexpected 'World' on line 2, column 1.",
+			true,
 		];
 
 		yield [
 			'"\uD801"',
 			'Invalid UTF-8 sequence \\uD801 on line 1, column 1.',
+			true,
+		];
+
+		yield [
+			'foo: not-a-object()',
+			"Only entity with name 'object' is allowed.",
+			false,
+		];
+
+		yield [
+			'not-a-object()',
+			"Only entity with name 'object' is allowed.",
+			false,
 		];
 	}
 

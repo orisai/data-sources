@@ -137,6 +137,12 @@ Supports:
 - file extensions - `yml` and `yaml`
 - media types - `application/x-yml` and `application/x-yaml`
 
+Some format-specific features are not supported for compatibility with other formats:
+
+- features generally [unsupported by symfony/yaml](https://symfony.com/doc/current/components/yaml.html#unsupported-yaml-features)
+- PHP constant/enum/object tags (symfony/yaml feature)
+- Custom YAML tags
+
 #### Neon
 
 [Neon](https://github.com/nette/neon) format encoder
@@ -153,6 +159,12 @@ Supports:
 
 - file extensions - `neon`
 - media types - `application/x-neon`
+
+Some format-specific features are not supported for compatibility with other formats:
+
+- neon entities
+  - e.g. `example()` or `example(foo: bar)`
+  - except `object()` which is used to represent stdClass
 
 #### Custom
 

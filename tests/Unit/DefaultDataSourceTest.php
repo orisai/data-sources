@@ -14,6 +14,7 @@ use Orisai\DataSources\JsonFormatEncoder;
 use Orisai\Exceptions\Logic\InvalidArgument;
 use Orisai\Exceptions\Message;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Tests\Orisai\DataSources\Doubles\SerializeFormatEncoder;
 use Tests\Orisai\DataSources\Doubles\StdClassChild;
 use function fopen;
@@ -71,10 +72,12 @@ final class DefaultDataSourceTest extends TestCase
 		$source = new DefaultDataSource($manager);
 
 		$this->expectException(EncodingFailure::class);
-		$this->expectExceptionMessage(<<<'MSG'
+		$this->expectExceptionMessage(
+			<<<'MSG'
 Context: Encoding raw data into string of type 'json'.
 Problem: Malformed UTF-8 characters, possibly incorrectly encoded
-MSG);
+MSG,
+		);
 
 		$source->encode(["utf\xFF"], 'json');
 	}
@@ -86,10 +89,12 @@ MSG);
 		$source = new DefaultDataSource($manager);
 
 		$this->expectException(EncodingFailure::class);
-		$this->expectExceptionMessage(<<<'MSG'
+		$this->expectExceptionMessage(
+			<<<'MSG'
 Context: Decoding content of type 'json' into raw data.
 Problem: Syntax error
-MSG);
+MSG,
+		);
 
 		$source->decode('{', 'json');
 	}
@@ -101,7 +106,16 @@ MSG);
 	 */
 	public function testEncoding($data): void
 	{
-		$types = ['serial', 'neon', 'yaml', 'json'];
+		$types = [
+			'serial',
+			'text/serial',
+			'neon',
+			'application/x-neon',
+			'yaml',
+			'application/x-yaml',
+			'json',
+			'application/json',
+		];
 		$manager = new DefaultFormatEncoderManager();
 		$manager->addEncoder(new SerializeFormatEncoder());
 		$manager->addEncoder(new NeonFormatEncoder());
@@ -111,7 +125,11 @@ MSG);
 
 		foreach ($types as $type) {
 			$content = $source->encode($data, $type);
-			self::assertSame($data, $source->decode($content, $type));
+			self::assertEquals(
+				$data,
+				$source->decode($content, $type),
+				"encode/decode equality of $type",
+			);
 		}
 	}
 
@@ -156,9 +174,25 @@ MSG);
 				2 => 'second',
 			],
 		];
+
+		yield 'empty-stdClass' => [
+			new stdClass(),
+		];
+
+		yield 'stdClass' => [
+			(object) [
+				'foo' => 1,
+				'bar' => 2,
+			],
+		];
 	}
 
-	public function testNoEncoder(): void
+	/**
+	 * @param list<string> $supported
+	 *
+	 * @dataProvider provideNoEncoderTypes
+	 */
+	public function testNoEncoder(string $type, array $supported): void
 	{
 		$manager = new DefaultFormatEncoderManager();
 		$manager->addEncoder(new SerializeFormatEncoder());
@@ -166,18 +200,32 @@ MSG);
 
 		$exception = null;
 		try {
-			$source->encode(['foo' => 'bar'], 'neon');
+			$source->encode(['foo' => 'bar'], $type);
 		} catch (NotSupportedType $exception) {
 			// Handled below
 		}
 
 		self::assertInstanceOf(NotSupportedType::class, $exception);
-		self::assertSame("No encoder is available for type 'neon'.", $exception->getMessage());
-		self::assertSame('neon', $exception->getRequestedType());
+		self::assertSame("No encoder is available for type '$type'.", $exception->getMessage());
+		self::assertSame($type, $exception->getRequestedType());
 		self::assertSame(
-			['serial'],
+			$supported,
 			$exception->getSupportedTypes(),
 		);
+	}
+
+	public function provideNoEncoderTypes(): Generator
+	{
+		$supportedMediaTypes = ['text/serial'];
+		$supportedExtensions = ['serial'];
+
+		yield ['application/x-neon', $supportedMediaTypes];
+		yield ['application/x-yaml', $supportedMediaTypes];
+		yield ['application/json', $supportedMediaTypes];
+
+		yield ['neon', $supportedExtensions];
+		yield ['yaml', $supportedExtensions];
+		yield ['json', $supportedExtensions];
 	}
 
 	public function testSupportedContentTypes(): void

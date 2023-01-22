@@ -9,6 +9,7 @@ use Orisai\DataSources\JsonFormatEncoder;
 use Orisai\Utils\Dependencies\DependenciesTester;
 use Orisai\Utils\Dependencies\Exception\ExtensionRequired;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use function str_replace;
 use const INF;
 use const NAN;
@@ -40,6 +41,13 @@ final class JsonFormatEncoderTest extends TestCase
 			20 => '"baz"',
 			30 => '&blong&',
 			40 => "\xc3\xa9",
+			41 => new stdClass(),
+			42 => (object) [
+				'foo' => 1,
+				'bar' => 2,
+			],
+			43 => [],
+			44 => "multi\nline",
 		];
 
 		$encoded = str_replace("\n", PHP_EOL, $encoder->encode($data));
@@ -64,14 +72,24 @@ final class JsonFormatEncoderTest extends TestCase
     "10": "'bar'",
     "20": "\"baz\"",
     "30": "&blong&",
-    "40": "é"
+    "40": "é",
+    "41": {},
+    "42": {
+        "foo": 1,
+        "bar": 2
+    },
+    "43": [],
+    "44": "multi\nline"
 }
 JSON,
 			$encoded,
 		);
 
-		self::assertSame(
-			$data,
+		// Because PHP arrays are too powerful
+		$data[7][0] = (object) $data[7][0];
+		$data[7] = (object) $data[7];
+		self::assertEquals(
+			(object) $data,
 			$encoder->decode($encoded),
 		);
 	}
