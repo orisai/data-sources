@@ -11,6 +11,7 @@ Load and save data from and to various data formats
 	- [Yaml](#yaml)
 	- [Neon](#neon)
 - [Accepted data types](#accepted-data-types)
+- [Integrations and extensions](#integrations-and-extensions)
 
 ## Setup
 
@@ -225,3 +226,7 @@ To make all encoders compatible and decoders output more reliable, only followin
 Encoded data validity is ensured by [`DataSource`](#data-source).
 
 Decoded data validity must be ensured by each [`FormatEncoder`](#format-encoders).
+
+## Integrations and extensions
+
+- [Nette](https://github.com/nette) integration - [orisai/nette-data-sources](https://github.com/orisai/nette-data-sources)
