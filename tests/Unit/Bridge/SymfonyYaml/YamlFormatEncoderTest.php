@@ -210,7 +210,7 @@ YAML,
 
 		$yaml = <<<'YAML'
 a: 2016-05-27
-b: 2016-05-27T02:59:43.1Z
+b: 2016-05-27T02:59:43Z
 # not a datetime, just compatibility test
 c: 1464307200
 d: '1464307200'
